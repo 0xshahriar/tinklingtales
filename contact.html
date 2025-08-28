@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact — Tinkling Tales</title>
+  <meta name="description" content="Contact Tinkling Tales for product inquiries, orders, or support." />
+  <link rel="canonical" href="https://example.com/contact" />
+  <link rel="icon" href="/favicon.ico" />
+
+  <!-- Open Graph / Social -->
+  <meta property="og:title" content="Contact — Tinkling Tales" />
+  <meta property="og:description" content="Reach out to Tinkling Tales via Messenger, phone, or email." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://example.com/contact" />
+  <meta property="og:image" content="/og-image.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #f7f7fb;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --brand: #111111;
+      --line: #e5e7eb;
+      --radius: 18px;
+      --shadow: 0 10px 25px rgba(0, 0, 0, .06)
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 255, 255, .8);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line)
+    }
+
+    .h-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 10px
+    }
+
+    .brand {
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .spacer {
+      flex: 1;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .btn.primary {
+      background: var(--brand);
+      color: #fff;
+      border-color: var(--brand);
+    }
+
+    main {
+      padding: 40px 0;
+    }
+
+    .policy-box {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .policy-box h1 {
+      margin-top: 0;
+      font-size: 28px;
+    }
+
+    .policy-box h2 {
+      margin-top: 24px;
+      font-size: 20px;
+    }
+
+    .policy-box p,
+    .policy-box li {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #374151;
+    }
+
+    label span {
+      display: block;
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    footer {
+      border-top: 0 solid var(--line);
+    }
+
+    footer .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 0;
+      color: #6b7280;
+      font-size: 14px
+    }
+
+    @media (max-width: 640px) {
+      footer .row {
+        flex-direction: column;
+        text-align: center;
+        gap: 8px
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container h-row">
+      <a href="/index.html" class="brand">Tinkling Tales</a>
+      <span class="spacer"></span>
+      <a class="btn" href="https://www.facebook.com/tinklingtales" target="_blank" rel="noreferrer">Facebook</a>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="container">
+    <div class="policy-box">
+      <h1>Contact Us</h1>
+      <p>If you have any questions about our products, orders, or policies, feel free to reach out using the form below or directly through Messenger.</p>
+
+      <form id="contactForm" style="display:grid;gap:12px;margin-top:16px">
+        <label>
+          <span>Name</span>
+          <input type="text" id="name" required placeholder="Your full name" />
+        </label>
+        <label>
+          <span>Phone</span>
+          <input type="tel" id="phone" required placeholder="01XXXXXXXXX" />
+        </label>
+        <label>
+          <span>Email</span>
+          <input type="email" id="email" placeholder="you@example.com" />
+        </label>
+        <label>
+          <span>Message</span>
+          <textarea id="message" rows="4" required placeholder="Write your message..."></textarea>
+        </label>
+        <a id="submitContact" class="btn primary" href="#" target="_blank" rel="noreferrer">Send via Messenger</a>
+      </form>
+
+      <h2>Other Ways to Reach Us</h2>
+      <p>
+        <!--
+        Phone: +8801XXXXXXX <br>
+        Email: support@example.com <br>
+        -->
+        Messenger: <u><a href="https://m.me/tinklingtales">m.me/tinklingtales</a></u>
+      </p>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container row">
+      <div>© <span id="year"></span> Tinkling Tales. All rights reserved.</div>
+      <div style="display:flex;gap:12px">
+        <a class="muted" href="/return-policy.html">Return Policy</a>
+        <a class="muted" href="/terms.html">Terms</a>
+        <a class="muted" href="/contact.html">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const MESSENGER_ID = 'tinklingtales';
+      const STORAGE_KEY = 'tt_contact_form_v1';
+
+      const nameEl = document.getElementById('name');
+      const phoneEl = document.getElementById('phone');
+      const emailEl = document.getElementById('email');
+      const msgEl = document.getElementById('message');
+      const submitBtn = document.getElementById('submitContact');
+
+      function saveForm() {
+        const data = {
+          name: nameEl.value.trim(),
+          phone: phoneEl.value.trim(),
+          email: emailEl.value.trim(),
+          message: msgEl.value.trim()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      }
+
+      function loadForm() {
+        try {
+          const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+          if (data.name) nameEl.value = data.name;
+          if (data.phone) phoneEl.value = data.phone;
+          if (data.email) emailEl.value = data.email;
+          if (data.message) msgEl.value = data.message;
+        } catch { }
+      }
+
+      function updateLink() {
+        saveForm();
+        let msg = `Contact Request:%0A`;
+        if (nameEl.value.trim()) msg += `Name: ${nameEl.value.trim()}%0A`;
+        if (phoneEl.value.trim()) msg += `Phone: ${phoneEl.value.trim()}%0A`;
+        if (emailEl.value.trim()) msg += `Email: ${emailEl.value.trim()}%0A`;
+        if (msgEl.value.trim()) msg += `Message: ${msgEl.value.trim()}%0A`;
+        submitBtn.href = `https://m.me/${encodeURIComponent(MESSENGER_ID)}?ref=contact&text=${msg}`;
+      }
+
+      [nameEl, phoneEl, emailEl, msgEl].forEach(el => {
+        el.addEventListener('input', updateLink);
+      });
+
+      loadForm();
+      updateLink();
+      document.getElementById('year').textContent = new Date().getFullYear();
+    })();
+  </script>
+</body>
+</html>

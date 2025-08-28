@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Return Policy — Tinkling Tales</title>
+  <meta name="description" content="Learn about Tinkling Tales' return & exchange policy. Returns accepted within 3 days, courier-friendly process across Bangladesh." />
+  <link rel="canonical" href="https://example.com/return-policy" />
+  <link rel="icon" href="/favicon.ico" />
+
+  <!-- Open Graph / Social -->
+  <meta property="og:title" content="Return Policy — Tinkling Tales" />
+  <meta property="og:description" content="Returns accepted within 3 days. Submit a return request easily via Messenger." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://example.com/return-policy" />
+  <meta property="og:image" content="/og-image.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #f7f7fb;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --brand: #111111;
+      --line: #e5e7eb;
+      --radius: 18px;
+      --shadow: 0 10px 25px rgba(0, 0, 0, .06)
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 255, 255, .8);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line)
+    }
+
+    .h-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 10px
+    }
+
+    .brand {
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .spacer {
+      flex: 1;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .btn.primary {
+      background: var(--brand);
+      color: #fff;
+      border-color: var(--brand);
+    }
+
+    main {
+      padding: 40px 0;
+    }
+
+    .policy-box {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .policy-box h1 {
+      margin-top: 0;
+      font-size: 28px;
+    }
+
+    .policy-box h2 {
+      margin-top: 24px;
+      font-size: 20px;
+    }
+
+    .policy-box p,
+    .policy-box li {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #374151;
+    }
+
+    ul {
+      margin: 12px 0 12px 20px;
+    }
+
+    footer {
+      border-top: 0 solid var(--line);
+    }
+
+    footer .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 0;
+      color: #6b7280;
+      font-size: 14px
+    }
+
+    @media (max-width: 640px) {
+      footer .row {
+        flex-direction: column;
+        text-align: center;
+        gap: 8px
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container h-row">
+      <a href="/index.html" class="brand">Tinkling Tales</a>
+      <span class="spacer"></span>
+      <a class="btn" href="https://www.facebook.com/tinklingtales" target="_blank" rel="noreferrer">Facebook</a>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="container">
+    <div class="policy-box">
+      <h1>Return Policy</h1>
+      <p>We want you to love your bangles from Tinkling Tales. If something isn’t quite right, here’s how returns work:</p>
+
+      <h2>Eligibility</h2>
+      <ul>
+        <li>Items may be returned within <strong>3 days</strong> of delivery.</li>
+        <li>Products must be unworn and in original packaging.</li>
+        <li>Proof of purchase is required.</li>
+      </ul>
+
+      <h2>How to Return</h2>
+      <ul>
+        <li>Contact us on Facebook or Instagram within 3 days of receiving your order.</li>
+        <li>Pack the item securely in original condition.</li>
+        <li>Use courier service as guided by our team.</li>
+      </ul>
+
+      <h2>Refunds</h2>
+      <p>Refunds are provided only if an exchange is not possible. Processing takes 5–7 working days.</p>
+
+      <h2>Non-Returnable</h2>
+      <p>Custom or hygiene-sensitive items may not be eligible for return. You’ll be informed at purchase.</p>
+
+      <h2>Initiate a Return</h2>
+      <form id="returnForm" style="display:grid;gap:12px;margin-top:16px">
+        <label>
+          <span style="display:block;margin-bottom:4px;font-weight:500">Order ID</span>
+          <input type="text" id="orderId" required placeholder="e.g. TT12345"
+            style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line)" />
+        </label>
+        <label>
+          <span style="display:block;margin-bottom:4px;font-weight:500">Name</span>
+          <input type="text" id="custName" required placeholder="Your full name"
+            style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line)" />
+        </label>
+        <label>
+          <span style="display:block;margin-bottom:4px;font-weight:500">Phone Number</span>
+          <input type="tel" id="phone" required placeholder="e.g. 01XXXXXXXXX"
+            style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line)" />
+        </label>
+        <label>
+          <span style="display:block;margin-bottom:4px;font-weight:500">Day of Purchase</span>
+          <input type="date" id="purchaseDate" required
+            style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line)" />
+        </label>
+        <label>
+          <span style="display:block;margin-bottom:4px;font-weight:500">Reason for Return</span>
+          <select id="reason" required
+            style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line)">
+            <option value="">Select reason…</option>
+            <option value="Damaged">Damaged Item</option>
+            <option value="Wrong Item">Wrong Item Received</option>
+            <option value="Doesn’t Fit">Doesn’t Fit</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+        <label id="otherReasonWrap" style="display:none">
+          <span style="display:block;margin-bottom:4px;font-weight:500">Please specify</span>
+          <input type="text" id="otherReason" placeholder="Write reason"
+            style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line)" />
+        </label>
+        <label>
+          <span style="display:block;margin-bottom:4px;font-weight:500">Suggestions</span>
+          <textarea id="suggestions" rows="2" placeholder="Your suggestions for us…"
+            style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line)"></textarea>
+        </label>
+        <label>
+          <span style="display:block;margin-bottom:4px;font-weight:500">Additional Notes</span>
+          <textarea id="notes" rows="3" placeholder="Write any details…"
+            style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--line)"></textarea>
+        </label>
+        <a id="submitReturn" class="btn primary" href="#" target="_blank" rel="noreferrer">Submit via Messenger</a>
+      </form>
+
+      <h2>Need Help?</h2>
+      <p>
+        <u>
+        <a href="https://www.facebook.com/tinklingtales">
+          www.facebook.com/tinklingtales
+        </a>
+        </u>
+      </p>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container row">
+      <div>© <span id="year"></span> Tinkling Tales. All rights reserved.</div>
+      <div style="display:flex;gap:12px">
+        <a class="muted" href="/return-policy.html">Return Policy</a>
+        <a class="muted" href="terms.html">Terms</a>
+        <a class="muted" href="/contact.html">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const MESSENGER_ID = 'tinklingtales';
+      const STORAGE_KEY = 'tt_return_form_v2';
+
+      const orderId = document.getElementById('orderId');
+      const custName = document.getElementById('custName');
+      const phone = document.getElementById('phone');
+      const purchaseDate = document.getElementById('purchaseDate');
+      const reason = document.getElementById('reason');
+      const otherReasonWrap = document.getElementById('otherReasonWrap');
+      const otherReason = document.getElementById('otherReason');
+      const suggestions = document.getElementById('suggestions');
+      const notes = document.getElementById('notes');
+      const submitBtn = document.getElementById('submitReturn');
+
+      function saveForm() {
+        const data = {
+          orderId: orderId.value.trim(),
+          custName: custName.value.trim(),
+          phone: phone.value.trim(),
+          purchaseDate: purchaseDate.value,
+          reason: reason.value,
+          otherReason: otherReason.value.trim(),
+          suggestions: suggestions.value.trim(),
+          notes: notes.value.trim()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      }
+
+      function loadForm() {
+        try {
+          const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+          if (data.orderId) orderId.value = data.orderId;
+          if (data.custName) custName.value = data.custName;
+          if (data.phone) phone.value = data.phone;
+          if (data.purchaseDate) purchaseDate.value = data.purchaseDate;
+          if (data.reason) reason.value = data.reason;
+          if (data.otherReason) otherReason.value = data.otherReason;
+          if (data.suggestions) suggestions.value = data.suggestions;
+          if (data.notes) notes.value = data.notes;
+          toggleOtherBox();
+        } catch { }
+      }
+
+      function toggleOtherBox() {
+        if (reason.value === 'Other') {
+          otherReasonWrap.style.display = 'block';
+        } else {
+          otherReasonWrap.style.display = 'none';
+          otherReason.value = '';
+        }
+      }
+
+      function updateLink() {
+        saveForm();
+        let msg = `Return Request:%0A`;
+        if (orderId.value.trim()) msg += `Order ID: ${orderId.value.trim()}%0A`;
+        if (custName.value.trim()) msg += `Name: ${custName.value.trim()}%0A`;
+        if (phone.value.trim()) msg += `Phone: ${phone.value.trim()}%0A`;
+        if (purchaseDate.value) msg += `Purchase Date: ${purchaseDate.value}%0A`;
+        if (reason.value) msg += `Reason: ${reason.value}%0A`;
+        if (reason.value === 'Other' && otherReason.value.trim()) {
+          msg += `Other Reason: ${otherReason.value.trim()}%0A`;
+        }
+        if (suggestions.value.trim()) msg += `Suggestions: ${suggestions.value.trim()}%0A`;
+        if (notes.value.trim()) msg += `Notes: ${notes.value.trim()}%0A`;
+        submitBtn.href = `https://m.me/${encodeURIComponent(MESSENGER_ID)}?ref=return&text=${msg}`;
+      }
+
+      [orderId, custName, phone, purchaseDate, reason, otherReason, suggestions, notes].forEach(el => {
+        el.addEventListener('input', () => {
+          toggleOtherBox();
+          updateLink();
+        });
+        el.addEventListener('change', () => {
+          toggleOtherBox();
+          updateLink();
+        });
+      });
+
+      loadForm();
+      updateLink();
+      document.getElementById('year').textContent = new Date().getFullYear();
+    })();
+  </script>
+</body>
+
+</html>
