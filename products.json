@@ -2,7 +2,7 @@
   {
     "id": "P001",
     "name": "Ranga Roop",
-    "price": 350,
+    "price": 400,
     "colors": ["Red", "Ruby"],
     "sizes": ["2.2", "2.4", "2.6", "2.8"],
     "finish": "Glossy",
@@ -32,7 +32,7 @@
   {
     "id": "P004",
     "name": "Shuvro Kushum",
-    "price": 350,
+    "price": 600,
     "colors": ["White", "Golden", "Glass"],
     "sizes": ["2.2", "2.4", "2.6"],
     "finish": "Glossy",
@@ -42,7 +42,7 @@
   {
   "id": "P005",
   "name": "Shyamolika",
-  "price": 400,
+  "price": 600,
   "colors": ["Black", "Golden", "White"],
   "sizes": ["2.4", "2.6", "2.8"],
   "finish": "Glossy",
@@ -52,7 +52,7 @@
   {
   "id": "P006",
   "name": "Ranga Rojoni",
-  "price": 380,
+  "price": 400,
   "colors": ["Pink", "Golden"],
   "sizes": ["2.2", "2.4", "2.6", "2.8"],
   "finish": "Glossy",
