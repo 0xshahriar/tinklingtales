@@ -634,11 +634,15 @@
                 </div>
                 <!-- Delivery options -->
                 <div style="margin-top:10px;display:grid;gap:8px">
+                    <div style="margin-top:10px;display:grid;gap:8px">
                     <label style="display:flex;align-items:center;gap:6px;font-size:14px">
-                        <input type="checkbox" id="dhakaCheck" /> Delivery inside Dhaka (৳60) </label>
+                        <input type="radio" name="deliveryOption" value="dhaka" id="dhakaRadio" /> Delivery inside Dhaka (৳60)
+                    </label>
                     <label style="display:flex;align-items:center;gap:6px;font-size:14px">
-                        <input type="checkbox" id="outsideCheck" /> Delivery outside Dhaka (৳120) </label>
+                        <input type="radio" name="deliveryOption" value="outside" id="outsideRadio" /> Delivery outside Dhaka (৳120)
+                    </label>
                     <input id="deliveryAddress" type="text" placeholder="Delivery Address" class="input" style="width:100%;font-size:14px" />
+                </div>
                 </div>
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
                     <span class="muted">Delivery</span>
@@ -652,7 +656,7 @@
                     <strong id="grandTotal">৳0</strong>
                 </div>
                 <div style="display:grid;gap:8px;margin-top:10px">
-                    <a id="checkoutMessenger" class="btn primary block" href="#" target="_blank" rel="noreferrer">Checkout via Messenger</a>
+                   <a id="checkoutMessenger" class="btn primary block" href="about:blank">Checkout via Messenger</a>
                     <a id="checkoutWhatsApp" class="btn block" href="#" target="_blank" rel="noreferrer" style="display:none">Checkout via WhatsApp</a>
                 </div>
             </div>
@@ -726,11 +730,35 @@
                     deliveryCost: document.getElementById('deliveryCost'),
                     grandTotal: document.getElementById('grandTotal'),
                     deliveryAddress: document.getElementById('deliveryAddress'),
-                    dhakaCheck: document.getElementById('dhakaCheck'),
-                    outsideCheck: document.getElementById('outsideCheck'),
+                    dhakaRadio: document.getElementById('dhakaRadio'),
+                    outsideRadio: document.getElementById('outsideRadio'),
                     cartBadge: document.getElementById('cartBadge'),
                     toast: document.getElementById('toast')
                 };
+                // ===== CHECKOUT BUTTON HANDLERS =====
+                els.checkoutMessenger?.addEventListener('click', (e) => {
+                  e.preventDefault();
+                
+                  const msg = messageText();
+                  const encoded = encodeURIComponent(msg);
+                  const url = `https://m.me/tinklingtales?text=${encoded}`;
+                
+                  console.log("Opening Messenger URL:", url);
+                  window.open(url, "_blank");
+                });
+                
+                if (WHATSAPP_NUMBER) {
+                  els.checkoutWhatsApp?.addEventListener('click', (e) => {
+                    e.preventDefault();
+                
+                    const msg = messageText();
+                    const encoded = encodeURIComponent(msg);
+                    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`;
+                
+                    console.log("Opening WhatsApp URL:", url);
+                    window.open(url, "_blank");
+                  });
+                }
                 // ===== INIT TEXT / LINKS =====    
                 els.shopName.textContent = SHOP_NAME;
                 els.shopName2.textContent = SHOP_NAME;
@@ -760,7 +788,27 @@
                 // ===== PERSIST CART =====    
                 const CART_KEY = 'tt_cart_v1';
                 function saveCart() {
-                    localStorage.setItem(CART_KEY, JSON.stringify(state.cart));
+                    try {
+                        localStorage.setItem(CART_KEY, JSON.stringify(state.cart));
+                        console.log("Cart saved:", state.cart);
+                    } catch (err) {
+                        console.error("Cart save error:", err);
+                    }
+                }
+                
+                function loadCart() {
+                    try {
+                        const v = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+                        if (Array.isArray(v)) {
+                            state.cart = v;
+                            console.log("Cart loaded:", v);
+                        } else {
+                            state.cart = [];
+                        }
+                    } catch (err) {
+                        console.error("Cart load error:", err);
+                        state.cart = [];
+                    }
                 }
                 function loadCart() {
                     try {
@@ -879,17 +927,18 @@
                 // ===== DELIVERY =====    
                 let deliveryCost = 0;
                 function updateDeliveryOption() {
-                    if (els.dhakaCheck.checked) {
-                        els.outsideCheck.checked = false;
+                    if (els.dhakaRadio.checked) {
                         deliveryCost = 60;
-                    } else if (els.outsideCheck.checked) {
-                        els.dhakaCheck.checked = false;
+                    } else if (els.outsideRadio.checked) {
                         deliveryCost = 120;
                     } else {
                         deliveryCost = 0;
                     }
                     renderCart();
                 }
+                
+                els.dhakaRadio?.addEventListener('change', updateDeliveryOption);
+                els.outsideRadio?.addEventListener('change', updateDeliveryOption);
                 els.dhakaCheck?.addEventListener('change', updateDeliveryOption);
                 els.outsideCheck?.addEventListener('change', updateDeliveryOption);
                 function grandTotal() {
@@ -898,32 +947,83 @@
                 // ===== MESSAGE =====    
                 function messageText() {
                     if (state.cart.length === 0) return `Hi! I want to order from ${SHOP_NAME}.`;
-                    const lines = state.cart.map(i => `• ${i.name} (size ${i.size}) x${i.qty} = ${CURRENCY}${(i.price*i.qty).toLocaleString('en-BD')}`);
+                    
+                    const lines = state.cart.map(i =>
+                        `• ${i.name} (size ${i.size}) x${i.qty} = ${CURRENCY}${(i.price * i.qty).toLocaleString('en-BD')}`
+                    );
+                    
                     lines.push(`Subtotal: ${CURRENCY}${subtotal().toLocaleString('en-BD')}`);
+                    
                     if (deliveryCost > 0) {
                         lines.push(`Delivery: ${CURRENCY}${deliveryCost}`);
                     }
+                    
                     lines.push(`Total: ${CURRENCY}${grandTotal().toLocaleString('en-BD')}`);
+                    
                     const address = els.deliveryAddress?.value.trim();
                     if (address) {
                         lines.push(`Address: ${address}`);
                     }
-                    return `Assalamualaikum!%0A` + `I want to order:%0A` + lines.join('%0A');
+                    
+                    // CRLF ensures proper line breaks in Messenger
+                    return `Assalamualaikum!\r\n\nI want to order the following:\r\n` + lines.join('\r\n');
                 }
                 function updateCheckoutLinks() {
                     const msg = messageText();
-                    els.checkoutMessenger.href = `https://m.me/${encodeURIComponent(MESSENGER_ID)}?ref=shop&text=${msg}`;
-                    if (WHATSAPP_NUMBER) {
-                        els.checkoutWhatsApp.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
-                    }
+                    const encoded = encodeURIComponent(msg);
+                    
+                    // Force Messenger with prefilled text
+                    els.checkoutMessenger.addEventListener('click', (e) => {
+                    e.preventDefault(); // stop any default <a> navigation
+                    
+                    const msg = messageText();
+                    const encoded = encodeURIComponent(msg);
+                    
+                    // Always build link fresh
+                    const url = `https://m.me/tinklingtales?text=${encoded}`;
+                    console.log("Opening Messenger URL:", url);
+                    window.open(url, "_blank");
+                });
+                
+                if (WHATSAPP_NUMBER) {
+                    els.checkoutWhatsApp.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        
+                        const msg = messageText();
+                        const encoded = encodeURIComponent(msg);
+                        
+                        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`, "_blank");
+                    });
+                }
                 }
                 function renderCart() {
                     els.cartList.innerHTML = '';
+                    
                     if (state.cart.length === 0) {
                         els.cartEmpty.style.display = 'block';
+                        
+                        // badge hidden
                         if (els.cartBadge) els.cartBadge.style.display = 'none';
+                        
+                        // disable delivery inputs
+                        if (els.deliveryAddress) {
+                            els.deliveryAddress.disabled = true;
+                            els.deliveryAddress.value = '';
+                        }
+                        if (els.dhakaRadio) {
+                            els.dhakaRadio.disabled = true;
+                            els.dhakaRadio.checked = false;
+                        }
+                        if (els.outsideRadio) {
+                            els.outsideRadio.disabled = true;
+                            els.outsideRadio.checked = false;
+                        }
+                        
+                        deliveryCost = 0;
                     } else {
                         els.cartEmpty.style.display = 'none';
+                        
+                        // update cart badge
                         const count = state.cart.reduce((s, i) => s + i.qty, 0);
                         if (els.cartBadge) {
                             els.cartBadge.textContent = count;
@@ -934,43 +1034,41 @@
                                 els.cartBadge.style.transition = 'transform 0.2s ease';
                             }, 50);
                         }
+                        
+                        // enable delivery inputs
+                        if (els.deliveryAddress) els.deliveryAddress.disabled = false;
+                        if (els.dhakaRadio) els.dhakaRadio.disabled = false;
+                        if (els.outsideRadio) els.outsideRadio.disabled = false;
                     }
+                    
+                    // render cart items
                     state.cart.forEach(i => {
                         const row = document.createElement('div');
                         row.className = 'cart-item';
                         row.innerHTML = `    
-                            <div style="flex:1">    
-                              <div style="font-weight:600">${i.name}</div>    
-                              <div class="muted">Size ${i.size}</div>    
-                              <div style="margin-top:4px;font-weight:700">${CURRENCY}${(i.price*i.qty).toLocaleString('en-BD')}</div>    
-                            </div>    
-                            <div class="qty">    
-                              <button class="iconbtn" data-act="dec" type="button">−</button>    
-                              <div style="width:28px;text-align:center">${i.qty}</div>    
-                              <button class="iconbtn" data-act="inc" type="button">+</button>    
-                            </div>    
-                            <button class="muted" data-act="rm" style="border:0;background:none;cursor:pointer" type="button">Remove</button>`;
+                      <div style="flex:1">    
+                        <div style="font-weight:600">${i.name}</div>    
+                        <div class="muted">Size ${i.size}</div>    
+                        <div style="margin-top:4px;font-weight:700">${CURRENCY}${(i.price*i.qty).toLocaleString('en-BD')}</div>    
+                      </div>    
+                      <div class="qty">    
+                        <button class="iconbtn" data-act="dec" type="button">−</button>    
+                        <div style="width:28px;text-align:center">${i.qty}</div>    
+                        <button class="iconbtn" data-act="inc" type="button">+</button>    
+                      </div>    
+                      <button class="muted" data-act="rm" style="border:0;background:none;cursor:pointer" type="button">Remove</button>`;
+                        
                         row.querySelector('[data-act="inc"]').addEventListener('click', () => inc(i.id, i.size));
                         row.querySelector('[data-act="dec"]').addEventListener('click', () => dec(i.id, i.size));
                         row.querySelector('[data-act="rm"]').addEventListener('click', () => removeItem(i.id, i.size));
                         els.cartList.appendChild(row);
                     });
+                    
+                    // update totals
                     els.subtotal.textContent = CURRENCY + subtotal().toLocaleString('en-BD');
                     if (els.deliveryCost) els.deliveryCost.textContent = CURRENCY + deliveryCost.toLocaleString('en-BD');
                     if (els.grandTotal) els.grandTotal.textContent = CURRENCY + grandTotal().toLocaleString('en-BD');
-                    if (state.cart.length === 0) {
-                        els.deliveryAddress.disabled = true;
-                        els.deliveryAddress.value = '';
-                        els.dhakaCheck.disabled = true;
-                        els.outsideCheck.disabled = true;
-                        els.dhakaCheck.checked = false;
-                        els.outsideCheck.checked = false;
-                        deliveryCost = 0;
-                    } else {
-                        els.deliveryAddress.disabled = false;
-                        els.dhakaCheck.disabled = false;
-                        els.outsideCheck.disabled = false;
-                    }
+                    
                     updateCheckoutLinks();
                 }
                 // ===== DRAWER =====    
@@ -984,7 +1082,10 @@
                 }
                 els.cartBtn.addEventListener('click', openDrawer);
                 els.backdrop.addEventListener('click', closeDrawer);
-                els.closeDrawer.addEventListener('click', closeDrawer);
+                els.closeDrawer.addEventListener('click', () => {
+                    saveCart();
+                    closeDrawer();
+                });
                 // ===== FILTER HANDLERS =====    
                 els.q.addEventListener('input', () => {
                     state.query = els.q.value;

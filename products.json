@@ -14,7 +14,7 @@
     "name": "Monihar Melody",
     "price": 350,
     "colors": ["Red", "Golden"],
-    "sizes": ["2.4", "2.6", "2.8"],
+    "sizes": ["2.2", "2.4", "2.6", "2.8"],
     "finish": "Matte",
     "image": "/monihar_melody.jpg",
     "tags": ["Daily Wear", "Lightweight"]
@@ -34,7 +34,7 @@
     "name": "Shuvro Kushum",
     "price": 600,
     "colors": ["White", "Golden", "Glass"],
-    "sizes": ["2.2", "2.4", "2.6"],
+    "sizes": ["2.2", "2.4", "2.6", "2.8"],
     "finish": "Glossy",
     "image": "/shuvro_kushum.jpg",
     "tags": ["Festive", "Handcrafted"]
@@ -44,7 +44,7 @@
   "name": "Shyamolika",
   "price": 600,
   "colors": ["Black", "Golden", "White"],
-  "sizes": ["2.4", "2.6", "2.8"],
+  "sizes": ["2.2", "2.4", "2.6", "2.8"],
   "finish": "Glossy",
   "image": "/shyamolika.jpg",
   "tags": ["Bridal", "Festive", "Elegant"]
