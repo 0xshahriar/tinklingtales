@@ -585,7 +585,10 @@
                             <li>3.0 ≈ 8.2 cm</li>
                         </ul>
                         <p>While measuring, please consider the bangle width and allow room for comfort.</p>
-                        <div class="muted" style="margin-top:6px">Need help? Message us on Facebook.</div>
+                        <div class="muted" style="margin-top:6px">Need help? <a href="https://www.facebook.com/tinklingtales">Message</a> us on Facebook.</div>
+                        <div class="muted" style="font-size:13px;margin-top:8px">
+                            More info in our <a href="/return-policy.html">Return Policy</a>.
+                        </div>
                     </div>
                 </div>
                 <div class="box">
@@ -641,6 +644,9 @@
                     <span class="muted">Delivery</span>
                     <strong id="deliveryCost">৳0</strong>
                 </div>
+                <div class="muted" style="font-size:13px;margin-top:6px">
+                    See our <a href="/return-policy.html">Return Policy</a> for exchange details.
+                </div>
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
                     <span class="muted">Total</span>
                     <strong id="grandTotal">৳0</strong>
@@ -659,34 +665,30 @@
                 const WHATSAPP_NUMBER = ''; // e.g. '8801XXXXXXXXX' (no +)    
                 const CURRENCY = '৳';
                 // --- Products ---    
-                const PRODUCTS = [{
-                    id: 'B001',
-                    name: 'Ranga Roop',
-                    price: 350,
-                    colors: ['Red', 'Ruby'],
-                    sizes: ['2.2', '2.4', '2.6', '2.8'],
-                    finish: 'Glossy',
-                    image: '/ranga_roop.jpg',
-                    tags: ['Bridal', 'Premium']
-                }, {
-                    id: 'B002',
-                    name: 'Monihar Melody',
-                    price: 350,
-                    colors: ['Red', 'Golden'],
-                    sizes: ['2.4', '2.6', '2.8'],
-                    finish: 'Matte',
-                    image: '/monihar_melody.jpg',
-                    tags: ['Daily Wear', 'Lightweight']
-                }, {
-                    id: 'B003',
-                    name: 'Shonali Shaj',
-                    price: 350,
-                    colors: ['Golden', 'Red', 'Brown'],
-                    sizes: ['2.2', '2.4', '2.6'],
-                    finish: 'Matte',
-                    image: '/shonali_shaj.jpg',
-                    tags: ['Festive', 'Handcrafted']
-                }];
+                const PRODUCTS = [];
+                fetch('/products.json')
+                .then(res => res.json())
+                .then(data => {
+                    PRODUCTS.push(...data);
+                    // regenerate filter options
+                    const COLOR_SET = [...new Set(PRODUCTS.flatMap(p => p.colors))].sort();
+                    const SIZE_SET = [...new Set(PRODUCTS.flatMap(p => p.sizes))].sort((a, b) => parseFloat(a) - parseFloat(b));
+                    COLOR_SET.forEach(c => {
+                        const o = document.createElement('option');
+                        o.value = c;
+                        o.textContent = c;
+                        els.color.appendChild(o);
+                    });
+                    SIZE_SET.forEach(s => {
+                        const o = document.createElement('option');
+                        o.value = s;
+                        o.textContent = s;
+                        els.size.appendChild(o);
+                    });
+                    renderProducts();
+                    renderCart();
+                })
+                .catch(err => console.error('Failed to load products:', err));
                 // Derive available sizes & colors from PRODUCTS    
                 const COLOR_SET = [...new Set(PRODUCTS.flatMap(p => p.colors))].sort();
                 const SIZE_SET = [...new Set(PRODUCTS.flatMap(p => p.sizes))].sort((a, b) => parseFloat(a) - parseFloat(b));
@@ -757,11 +759,9 @@
                 });
                 // ===== PERSIST CART =====    
                 const CART_KEY = 'tt_cart_v1';
-
                 function saveCart() {
                     localStorage.setItem(CART_KEY, JSON.stringify(state.cart));
                 }
-
                 function loadCart() {
                     try {
                         const v = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
@@ -810,17 +810,17 @@
                         const card = document.createElement('article');
                         card.className = 'card';
                         card.innerHTML = `    
-        <div class="img"><img alt="${p.name}" src="${p.image}" loading="lazy"/></div>    
-        <div class="body">    
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">    
-            <h3 style="margin:0;font-weight:600">${p.name}</h3>    
-            <div class="price">${CURRENCY}${p.price.toLocaleString('en-BD')}</div>    
-          </div>    
-          <div class="muted">${p.finish} • ${p.colors.join(', ')}</div>    
-          <div class="pills" data-role="sizes">${p.sizes.map((s,i)=>`<button class="pill ${i===0?'active':''}" type="button" data-size="${s}">${s}</button>`).join('')}</div>    
-          <div class="tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>    
-          <button class="btn primary" data-role="add" type="button">Add to cart</button>    
-        </div>`;
+                            <div class="img"><img alt="${p.name}" src="${p.image}" loading="lazy"/></div>    
+                            <div class="body">    
+                              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">    
+                                <h3 style="margin:0;font-weight:600">${p.name}</h3>    
+                                <div class="price">${CURRENCY}${p.price.toLocaleString('en-BD')}</div>    
+                              </div>    
+                              <div class="muted">${p.finish} • ${p.colors.join(', ')}</div>    
+                              <div class="pills" data-role="sizes">${p.sizes.map((s,i)=>`<button class="pill ${i===0?'active':''}" type="button" data-size="${s}">${s}</button>`).join('')}</div>    
+                              <div class="tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>    
+                              <button class="btn primary" data-role="add" type="button">Add to cart</button>
+                            </div>`;
                         const pills = card.querySelectorAll('[data-role="sizes"] .pill');
                         let selectedSize = p.sizes[0];
                         pills.forEach(btn => btn.addEventListener('click', () => {
@@ -852,7 +852,6 @@
                     renderCart();
                     saveCart();
                 }
-
                 function inc(id, size) {
                     const i = state.cart.find(x => x.id === id && x.size === size);
                     if (i) {
@@ -861,7 +860,6 @@
                         saveCart();
                     }
                 }
-
                 function dec(id, size) {
                     const i = state.cart.find(x => x.id === id && x.size === size);
                     if (i) {
@@ -870,19 +868,16 @@
                         saveCart();
                     }
                 }
-
                 function removeItem(id, size) {
                     state.cart = state.cart.filter(i => !(i.id === id && i.size === size));
                     renderCart();
                     saveCart();
                 }
-
                 function subtotal() {
                     return state.cart.reduce((s, i) => s + i.price * i.qty, 0);
                 }
                 // ===== DELIVERY =====    
                 let deliveryCost = 0;
-
                 function updateDeliveryOption() {
                     if (els.dhakaCheck.checked) {
                         els.outsideCheck.checked = false;
@@ -897,7 +892,6 @@
                 }
                 els.dhakaCheck?.addEventListener('change', updateDeliveryOption);
                 els.outsideCheck?.addEventListener('change', updateDeliveryOption);
-
                 function grandTotal() {
                     return subtotal() + deliveryCost;
                 }
@@ -916,7 +910,6 @@
                     }
                     return `Assalamualaikum!%0A` + `I want to order:%0A` + lines.join('%0A');
                 }
-
                 function updateCheckoutLinks() {
                     const msg = messageText();
                     els.checkoutMessenger.href = `https://m.me/${encodeURIComponent(MESSENGER_ID)}?ref=shop&text=${msg}`;
@@ -924,7 +917,6 @@
                         els.checkoutWhatsApp.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
                     }
                 }
-
                 function renderCart() {
                     els.cartList.innerHTML = '';
                     if (state.cart.length === 0) {
@@ -947,17 +939,17 @@
                         const row = document.createElement('div');
                         row.className = 'cart-item';
                         row.innerHTML = `    
-        <div style="flex:1">    
-          <div style="font-weight:600">${i.name}</div>    
-          <div class="muted">Size ${i.size}</div>    
-          <div style="margin-top:4px;font-weight:700">${CURRENCY}${(i.price*i.qty).toLocaleString('en-BD')}</div>    
-        </div>    
-        <div class="qty">    
-          <button class="iconbtn" data-act="dec" type="button">−</button>    
-          <div style="width:28px;text-align:center">${i.qty}</div>    
-          <button class="iconbtn" data-act="inc" type="button">+</button>    
-        </div>    
-        <button class="muted" data-act="rm" style="border:0;background:none;cursor:pointer" type="button">Remove</button>`;
+                            <div style="flex:1">    
+                              <div style="font-weight:600">${i.name}</div>    
+                              <div class="muted">Size ${i.size}</div>    
+                              <div style="margin-top:4px;font-weight:700">${CURRENCY}${(i.price*i.qty).toLocaleString('en-BD')}</div>    
+                            </div>    
+                            <div class="qty">    
+                              <button class="iconbtn" data-act="dec" type="button">−</button>    
+                              <div style="width:28px;text-align:center">${i.qty}</div>    
+                              <button class="iconbtn" data-act="inc" type="button">+</button>    
+                            </div>    
+                            <button class="muted" data-act="rm" style="border:0;background:none;cursor:pointer" type="button">Remove</button>`;
                         row.querySelector('[data-act="inc"]').addEventListener('click', () => inc(i.id, i.size));
                         row.querySelector('[data-act="dec"]').addEventListener('click', () => dec(i.id, i.size));
                         row.querySelector('[data-act="rm"]').addEventListener('click', () => removeItem(i.id, i.size));
@@ -986,7 +978,6 @@
                     els.drawer.classList.add('open');
                     els.drawer.setAttribute('aria-hidden', 'false');
                 }
-
                 function closeDrawer() {
                     els.drawer.classList.remove('open');
                     els.drawer.setAttribute('aria-hidden', 'true');
@@ -1045,5 +1036,6 @@
             })();
         </script>
         <div id="toast">Added to cart</div>
+    </div>  
 </body>
 </html>
