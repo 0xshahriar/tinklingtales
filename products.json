@@ -58,5 +58,65 @@
   "finish": "Glossy",
   "image": "/ranga_rojoni.jpg",
   "tags": ["Festive", "Handcrafted", "Vibrant"]
+  },
+  {
+    "id": "P001",
+    "name": "Ranga Roop",
+    "price": 400,
+    "colors": ["Red", "Ruby"],
+    "sizes": ["2.2", "2.4", "2.6", "2.8"],
+    "finish": "Glossy",
+    "image": "/ranga_roop.jpg",
+    "tags": ["Bridal", "Premium"]
+  },
+  {
+    "id": "P002",
+    "name": "Monihar Melody",
+    "price": 350,
+    "colors": ["Red", "Golden"],
+    "sizes": ["2.2", "2.4", "2.6", "2.8"],
+    "finish": "Matte",
+    "image": "/monihar_melody.jpg",
+    "tags": ["Daily Wear", "Lightweight"]
+  },
+  {
+    "id": "P003",
+    "name": "Shonali Shaj",
+    "price": 350,
+    "colors": ["Golden", "Red", "Brown"],
+    "sizes": ["2.2", "2.4", "2.6"],
+    "finish": "Matte",
+    "image": "/shonali_shaj.jpg",
+    "tags": ["Festive", "Handcrafted"]
+  },
+  {
+    "id": "P004",
+    "name": "Shuvro Kushum",
+    "price": 600,
+    "colors": ["White", "Golden", "Glass"],
+    "sizes": ["2.2", "2.4", "2.6", "2.8"],
+    "finish": "Glossy",
+    "image": "/shuvro_kushum.jpg",
+    "tags": ["Festive", "Handcrafted"]
+  },
+  {
+  "id": "P005",
+  "name": "Shyamolika",
+  "price": 600,
+  "colors": ["Black", "Golden", "White"],
+  "sizes": ["2.2", "2.4", "2.6", "2.8"],
+  "finish": "Glossy",
+  "image": "/shyamolika.jpg",
+  "tags": ["Bridal", "Festive", "Elegant"]
+  },
+  {
+  "id": "P006",
+  "name": "Ranga Rojoni",
+  "price": 400,
+  "colors": ["Pink", "Golden"],
+  "sizes": ["2.2", "2.4", "2.6", "2.8"],
+  "finish": "Glossy",
+  "image": "/ranga_rojoni.jpg",
+  "tags": ["Festive", "Handcrafted", "Vibrant"]
   }
 ]
