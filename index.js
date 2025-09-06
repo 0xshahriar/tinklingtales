@@ -45,6 +45,10 @@
         maxPrice: null,
         cart: [],
     };
+
+    // 👇 NEW: control how many products to show
+    let visibleCount = 6;
+
     const els = {
         shopName: document.getElementById("shopName"),
         shopName2: document.getElementById("shopName2"),
@@ -109,7 +113,7 @@
     els.fbFollow.href = FACEBOOK_PAGE_URL;
     els.fbFollow.textContent = FACEBOOK_PAGE_URL.replace("https://", "");
     els.msgBtn.href = `https://m.me/${encodeURIComponent(MESSENGER_ID)}`;
-    els.contactLink.href = `https://m.me/${encodeURIComponent(MESSENGER_ID)}`;
+    els.contactLink.href = "/contact.html"; // ✅ keep Contact page
     if (WHATSAPP_NUMBER) {
         els.waBtn.href = `https://wa.me/${WHATSAPP_NUMBER}`;
         els.waBtn.style.display = "inline-flex";
@@ -152,19 +156,12 @@
             state.cart = [];
         }
     }
-    function loadCart() {
-        try {
-            const v = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
-            if (Array.isArray(v)) state.cart = v;
-        } catch {}
-    }
     // ===== TOAST =====
     function showToast(msg) {
         const toast = els.toast;
         if (!toast) return;
         toast.textContent = msg;
         toast.style.display = "block";
-        // trigger transition
         void toast.offsetWidth;
         toast.style.opacity = "1";
         setTimeout(() => {
@@ -194,38 +191,40 @@
             return;
         }
         els.empty.style.display = "none";
-        results.forEach((p) => {
+
+        // 👇 NEW: only show visibleCount products
+        const toShow = results.slice(0, visibleCount);
+
+        toShow.forEach((p) => {
             const card = document.createElement("article");
             card.className = "card";
             card.innerHTML = `    
-                            <div class="img"><img alt="${p.name}" src="${
+                <div class="img"><img alt="${p.name}" src="${
                 p.image
             }" loading="lazy"/></div>    
-                            <div class="body">    
-                              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">    
-                                <h3 style="margin:0;font-weight:600">${
-                                    p.name
-                                }</h3>    
-                                <div class="price">${CURRENCY}${p.price.toLocaleString(
+                <div class="body">    
+                  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">    
+                    <h3 style="margin:0;font-weight:600">${p.name}</h3>    
+                    <div class="price">${CURRENCY}${p.price.toLocaleString(
                 "en-BD"
             )}</div>    
-                              </div>    
-                              <div class="muted">${p.finish} • ${p.colors.join(
+                  </div>    
+                  <div class="muted">${p.finish} • ${p.colors.join(
                 ", "
             )}</div>    
-                              <div class="pills" data-role="sizes">${p.sizes
-                                  .map(
-                                      (s, i) =>
-                                          `<button class="pill ${
-                                              i === 0 ? "active" : ""
-                                          }" type="button" data-size="${s}">${s}</button>`
-                                  )
-                                  .join("")}</div>    
-                              <div class="tags">${p.tags
-                                  .map((t) => `<span class="tag">${t}</span>`)
-                                  .join("")}</div>    
-                              <button class="btn primary" data-role="add" type="button">Add to cart</button>
-                            </div>`;
+                  <div class="pills" data-role="sizes">${p.sizes
+                      .map(
+                          (s, i) =>
+                              `<button class="pill ${
+                                  i === 0 ? "active" : ""
+                              }" type="button" data-size="${s}">${s}</button>`
+                      )
+                      .join("")}</div>    
+                  <div class="tags">${p.tags
+                      .map((t) => `<span class="tag">${t}</span>`)
+                      .join("")}</div>    
+                  <button class="btn primary" data-role="add" type="button">Add to cart</button>
+                </div>`;
             const pills = card.querySelectorAll('[data-role="sizes"] .pill');
             let selectedSize = p.sizes[0];
             pills.forEach((btn) =>
@@ -244,6 +243,14 @@
             );
             els.cards.appendChild(card);
         });
+
+        // 👇 NEW: Show/hide Show More button
+        const showMoreBtn = document.getElementById("showMoreBtn");
+        if (results.length > visibleCount) {
+            showMoreBtn.style.display = "inline-block";
+        } else {
+            showMoreBtn.style.display = "none";
+        }
     }
     // ===== CART =====
     function addToCart(product, size) {
@@ -305,8 +312,6 @@
 
     els.dhakaRadio?.addEventListener("change", updateDeliveryOption);
     els.outsideRadio?.addEventListener("change", updateDeliveryOption);
-    els.dhakaCheck?.addEventListener("change", updateDeliveryOption);
-    els.outsideCheck?.addEventListener("change", updateDeliveryOption);
     function grandTotal() {
         return subtotal() + deliveryCost;
     }
@@ -337,7 +342,6 @@
             lines.push(`Address: ${address}`);
         }
 
-        // CRLF ensures proper line breaks in Messenger
         return (
             `Assalamualaikum!\r\n\nI want to order the following:\r\n` +
             lines.join("\r\n")
@@ -346,44 +350,14 @@
     function updateCheckoutLinks() {
         const msg = messageText();
         const encoded = encodeURIComponent(msg);
-
-        // Force Messenger with prefilled text
-        els.checkoutMessenger.addEventListener("click", (e) => {
-            e.preventDefault(); // stop any default <a> navigation
-
-            const msg = messageText();
-            const encoded = encodeURIComponent(msg);
-
-            // Always build link fresh
-            const url = `https://m.me/tinklingtales?text=${encoded}`;
-            console.log("Opening Messenger URL:", url);
-            window.open(url, "_blank");
-        });
-
-        if (WHATSAPP_NUMBER) {
-            els.checkoutWhatsApp.addEventListener("click", (e) => {
-                e.preventDefault();
-
-                const msg = messageText();
-                const encoded = encodeURIComponent(msg);
-
-                window.open(
-                    `https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`,
-                    "_blank"
-                );
-            });
-        }
+        // no static href, handled on click
     }
     function renderCart() {
         els.cartList.innerHTML = "";
 
         if (state.cart.length === 0) {
             els.cartEmpty.style.display = "block";
-
-            // badge hidden
             if (els.cartBadge) els.cartBadge.style.display = "none";
-
-            // disable delivery inputs
             if (els.deliveryAddress) {
                 els.deliveryAddress.disabled = true;
                 els.deliveryAddress.value = "";
@@ -396,50 +370,36 @@
                 els.outsideRadio.disabled = true;
                 els.outsideRadio.checked = false;
             }
-
             deliveryCost = 0;
         } else {
             els.cartEmpty.style.display = "none";
-
-            // update cart badge
             const count = state.cart.reduce((s, i) => s + i.qty, 0);
             if (els.cartBadge) {
                 els.cartBadge.textContent = count;
                 els.cartBadge.style.display = "inline-block";
-                els.cartBadge.style.transform = "scale(1.2)";
-                setTimeout(() => {
-                    els.cartBadge.style.transform = "scale(1)";
-                    els.cartBadge.style.transition = "transform 0.2s ease";
-                }, 50);
             }
-
-            // enable delivery inputs
             if (els.deliveryAddress) els.deliveryAddress.disabled = false;
             if (els.dhakaRadio) els.dhakaRadio.disabled = false;
             if (els.outsideRadio) els.outsideRadio.disabled = false;
         }
 
-        // render cart items
         state.cart.forEach((i) => {
             const row = document.createElement("div");
             row.className = "cart-item";
             row.innerHTML = `    
-                      <div style="flex:1">    
-                        <div style="font-weight:600">${i.name}</div>    
-                        <div class="muted">Size ${i.size}</div>    
-                        <div style="margin-top:4px;font-weight:700">${CURRENCY}${(
+              <div style="flex:1">    
+                <div style="font-weight:600">${i.name}</div>    
+                <div class="muted">Size ${i.size}</div>    
+                <div style="margin-top:4px;font-weight:700">${CURRENCY}${(
                 i.price * i.qty
             ).toLocaleString("en-BD")}</div>    
-                      </div>    
-                      <div class="qty">    
-                        <button class="iconbtn" data-act="dec" type="button">−</button>    
-                        <div style="width:28px;text-align:center">${
-                            i.qty
-                        }</div>    
-                        <button class="iconbtn" data-act="inc" type="button">+</button>    
-                      </div>    
-                      <button class="muted" data-act="rm" style="border:0;background:none;cursor:pointer" type="button">Remove</button>`;
-
+              </div>    
+              <div class="qty">    
+                <button class="iconbtn" data-act="dec" type="button">−</button>    
+                <div style="width:28px;text-align:center">${i.qty}</div>    
+                <button class="iconbtn" data-act="inc" type="button">+</button>    
+              </div>    
+              <button class="muted" data-act="rm" style="border:0;background:none;cursor:pointer" type="button">Remove</button>`;
             row.querySelector('[data-act="inc"]').addEventListener(
                 "click",
                 () => inc(i.id, i.size)
@@ -454,7 +414,6 @@
             els.cartList.appendChild(row);
         });
 
-        // update totals
         els.subtotal.textContent =
             CURRENCY + subtotal().toLocaleString("en-BD");
         if (els.deliveryCost)
@@ -484,19 +443,28 @@
     // ===== FILTER HANDLERS =====
     els.q.addEventListener("input", () => {
         state.query = els.q.value;
+        visibleCount = 6; // reset on filter
         renderProducts();
     });
     els.color.addEventListener("change", () => {
         state.color = els.color.value;
+        visibleCount = 6; // reset on filter
         renderProducts();
     });
     els.size.addEventListener("change", () => {
         state.size = els.size.value;
+        visibleCount = 6; // reset on filter
         renderProducts();
     });
     els.maxPrice.addEventListener("input", () => {
         const v = els.maxPrice.value;
         state.maxPrice = v ? Number(v) : null;
+        visibleCount = 6; // reset on filter
+        renderProducts();
+    });
+    // ===== SHOW MORE HANDLER =====
+    document.getElementById("showMoreBtn").addEventListener("click", () => {
+        visibleCount += 6;
         renderProducts();
     });
     // ===== FIRST RENDER =====
@@ -525,6 +493,7 @@
             url: window.location.origin + "#" + p.id,
         },
     }));
+
     const ldScript = document.createElement("script");
     ldScript.type = "application/ld+json";
     ldScript.textContent = JSON.stringify([orgLd, ...productsLd]);
