@@ -22,7 +22,7 @@
   {
     "id": "P003",
     "name": "Shonali Shaj",
-    "price": 350,
+    "price": 300,
     "colors": ["Golden", "Red", "Brown"],
     "sizes": ["2.2", "2.4", "2.6"],
     "finish": "Matte",
@@ -52,7 +52,7 @@
   {
   "id": "P006",
   "name": "Ranga Rojoni",
-  "price": 400,
+  "price": 450,
   "colors": ["Pink", "Golden"],
   "sizes": ["2.2", "2.4", "2.6", "2.8", "3.0"],
   "finish": "Glossy",
