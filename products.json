@@ -4,7 +4,7 @@
     "name": "Ranga Roop",
     "price": 400,
     "colors": ["Red", "Ruby"],
-    "sizes": ["2.2", "2.4", "2.6", "2.8"],
+    "sizes": ["2.2", "2.4", "2.6", "2.8", "3.0"],
     "finish": "Glossy",
     "image": "/images/ranga_roop.jpg",
     "tags": ["Bridal", "Premium"]
@@ -14,7 +14,7 @@
     "name": "Monihar Melody",
     "price": 350,
     "colors": ["Red", "Golden"],
-    "sizes": ["2.2", "2.4", "2.6", "2.8"],
+    "sizes": ["2.2", "2.4", "2.6", "2.8", "3.0"],
     "finish": "Matte",
     "image": "/images/monihar_melody.jpg",
     "tags": ["Daily Wear", "Lightweight"]
@@ -34,7 +34,7 @@
     "name": "Shuvro Kushum",
     "price": 600,
     "colors": ["White", "Golden", "Glass"],
-    "sizes": ["2.2", "2.4", "2.6", "2.8"],
+    "sizes": ["2.2", "2.4", "2.6", "2.8", "3.0"],
     "finish": "Glossy",
     "image": "/images/shuvro_kushum.jpg",
     "tags": ["Festive", "Handcrafted"]
@@ -44,7 +44,7 @@
   "name": "Shyamolika",
   "price": 600,
   "colors": ["Black", "Golden", "White"],
-  "sizes": ["2.2", "2.4", "2.6", "2.8"],
+  "sizes": ["2.2", "2.4", "2.6", "2.8", "3.0"],
   "finish": "Glossy",
   "image": "/images/shyamolika.jpg",
   "tags": ["Bridal", "Festive", "Elegant"]
@@ -54,7 +54,7 @@
   "name": "Ranga Rojoni",
   "price": 400,
   "colors": ["Pink", "Golden"],
-  "sizes": ["2.2", "2.4", "2.6", "2.8"],
+  "sizes": ["2.2", "2.4", "2.6", "2.8", "3.0"],
   "finish": "Glossy",
   "image": "/images/ranga_rojoni.jpg",
   "tags": ["Festive", "Handcrafted", "Vibrant"]
@@ -64,7 +64,7 @@
   "name": "Roktoshoba",
   "price": 400,
   "colors": ["Red", "Golden"],
-  "sizes": ["2.2", "2.4", "2.6", "2.8"],
+  "sizes": ["2.2", "2.4", "2.6", "2.8", "3.0"],
   "finish": "Glossy",
   "image": "/images/roktoshoba.jpg",
   "tags": ["Festive", "Bridal"]
