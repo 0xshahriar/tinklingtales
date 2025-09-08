@@ -1,9 +1,10 @@
 (function () {
     const SHOP_NAME = "Tinkling Tales";
     const FACEBOOK_PAGE_URL = "https://www.facebook.com/tinklingtales";
-    const MESSENGER_ID = "tinklingtales";
-    const WHATSAPP_NUMBER = ""; // e.g. '8801XXXXXXXXX' (no +)
     const CURRENCY = "৳";
+    const API_URL =
+        "https://script.google.com/macros/s/AKfycbyMQRrvsac_lBvYOlt5gtaO4CKHTea7_UjeUC2VluTrPCKaYOERrpXV5jhkgoJPnYzdPA/exec"; // ✅ replace with your Apps Script URL
+
     // --- Products ---
     const PRODUCTS = [];
     fetch("/products.json")
@@ -33,11 +34,7 @@
             renderCart();
         })
         .catch((err) => console.error("Failed to load products:", err));
-    // Derive available sizes & colors from PRODUCTS
-    const COLOR_SET = [...new Set(PRODUCTS.flatMap((p) => p.colors))].sort();
-    const SIZE_SET = [...new Set(PRODUCTS.flatMap((p) => p.sizes))].sort(
-        (a, b) => parseFloat(a) - parseFloat(b)
-    );
+
     const state = {
         query: "",
         color: "",
@@ -46,7 +43,6 @@
         cart: [],
     };
 
-    // 👇 NEW: control how many products to show
     let visibleCount = 6;
 
     const els = {
@@ -70,8 +66,6 @@
         cartList: document.getElementById("cartList"),
         cartEmpty: document.getElementById("cartEmpty"),
         subtotal: document.getElementById("subtotal"),
-        checkoutMessenger: document.getElementById("checkoutMessenger"),
-        checkoutWhatsApp: document.getElementById("checkoutWhatsApp"),
         contactLink: document.getElementById("contactLink"),
         deliveryCost: document.getElementById("deliveryCost"),
         grandTotal: document.getElementById("grandTotal"),
@@ -80,31 +74,9 @@
         outsideRadio: document.getElementById("outsideRadio"),
         cartBadge: document.getElementById("cartBadge"),
         toast: document.getElementById("toast"),
+        checkoutBtn: document.getElementById("checkoutBtn"),
     };
-    // ===== CHECKOUT BUTTON HANDLERS =====
-    els.checkoutMessenger?.addEventListener("click", (e) => {
-        e.preventDefault();
 
-        const msg = messageText();
-        const encoded = encodeURIComponent(msg);
-        const url = `https://m.me/tinklingtales?text=${encoded}`;
-
-        console.log("Opening Messenger URL:", url);
-        window.open(url, "_blank");
-    });
-
-    if (WHATSAPP_NUMBER) {
-        els.checkoutWhatsApp?.addEventListener("click", (e) => {
-            e.preventDefault();
-
-            const msg = messageText();
-            const encoded = encodeURIComponent(msg);
-            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`;
-
-            console.log("Opening WhatsApp URL:", url);
-            window.open(url, "_blank");
-        });
-    }
     // ===== INIT TEXT / LINKS =====
     els.shopName.textContent = SHOP_NAME;
     els.shopName2.textContent = SHOP_NAME;
@@ -112,42 +84,23 @@
     els.fbLink.href = FACEBOOK_PAGE_URL;
     els.fbFollow.href = FACEBOOK_PAGE_URL;
     els.fbFollow.textContent = FACEBOOK_PAGE_URL.replace("https://", "");
-    els.msgBtn.href = `https://m.me/${encodeURIComponent(MESSENGER_ID)}`;
-    els.contactLink.href = "/contact.html"; // ✅ keep Contact page
-    if (WHATSAPP_NUMBER) {
-        els.waBtn.href = `https://wa.me/${WHATSAPP_NUMBER}`;
-        els.waBtn.style.display = "inline-flex";
-    }
-    // ===== FILTER OPTIONS =====
-    COLOR_SET.forEach((c) => {
-        const o = document.createElement("option");
-        o.value = c;
-        o.textContent = c;
-        els.color.appendChild(o);
-    });
-    SIZE_SET.forEach((s) => {
-        const o = document.createElement("option");
-        o.value = s;
-        o.textContent = s;
-        els.size.appendChild(o);
-    });
+    els.msgBtn.href = `https://m.me/tinklingtales`;
+    els.contactLink.href = "/contact.html";
+
     // ===== PERSIST CART =====
     const CART_KEY = "tt_cart_v1";
     function saveCart() {
         try {
             localStorage.setItem(CART_KEY, JSON.stringify(state.cart));
-            console.log("Cart saved:", state.cart);
         } catch (err) {
             console.error("Cart save error:", err);
         }
     }
-
     function loadCart() {
         try {
             const v = JSON.parse(localStorage.getItem(CART_KEY) || "[]");
             if (Array.isArray(v)) {
                 state.cart = v;
-                console.log("Cart loaded:", v);
             } else {
                 state.cart = [];
             }
@@ -156,6 +109,7 @@
             state.cart = [];
         }
     }
+
     // ===== TOAST =====
     function showToast(msg) {
         const toast = els.toast;
@@ -164,13 +118,10 @@
         toast.style.display = "block";
         void toast.offsetWidth;
         toast.style.opacity = "1";
-        setTimeout(() => {
-            toast.style.opacity = "0";
-        }, 1500);
-        setTimeout(() => {
-            toast.style.display = "none";
-        }, 2000);
+        setTimeout(() => (toast.style.opacity = "0"), 1500);
+        setTimeout(() => (toast.style.display = "none"), 2000);
     }
+
     // ===== RENDER PRODUCTS =====
     function renderProducts() {
         const { query, color, size, maxPrice } = state;
@@ -192,26 +143,23 @@
         }
         els.empty.style.display = "none";
 
-        // 👇 NEW: only show visibleCount products
         const toShow = results.slice(0, visibleCount);
 
         toShow.forEach((p) => {
             const card = document.createElement("article");
             card.className = "card";
-            card.innerHTML = `    
+            card.innerHTML = `
                 <div class="img"><img alt="${p.name}" src="${
                 p.image
-            }" loading="lazy"/></div>    
-                <div class="body">    
-                  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">    
-                    <h3 style="margin:0;font-weight:600">${p.name}</h3>    
+            }" loading="lazy"/></div>
+                <div class="body">
+                  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+                    <h3 style="margin:0;font-weight:600">${p.name}</h3>
                     <div class="price">${CURRENCY}${p.price.toLocaleString(
                 "en-BD"
-            )}</div>    
-                  </div>    
-                  <div class="muted">${p.finish} • ${p.colors.join(
-                ", "
-            )}</div>    
+            )}</div>
+                  </div>
+                  <div class="muted">${p.finish} • ${p.colors.join(", ")}</div>
                   <div class="pills" data-role="sizes">${p.sizes
                       .map(
                           (s, i) =>
@@ -219,10 +167,10 @@
                                   i === 0 ? "active" : ""
                               }" type="button" data-size="${s}">${s}</button>`
                       )
-                      .join("")}</div>    
+                      .join("")}</div>
                   <div class="tags">${p.tags
                       .map((t) => `<span class="tag">${t}</span>`)
-                      .join("")}</div>    
+                      .join("")}</div>
                   <button class="btn primary" data-role="add" type="button">Add to cart</button>
                 </div>`;
             const pills = card.querySelectorAll('[data-role="sizes"] .pill');
@@ -244,7 +192,6 @@
             els.cards.appendChild(card);
         });
 
-        // 👇 NEW: Show/hide Show More button
         const showMoreBtn = document.getElementById("showMoreBtn");
         if (results.length > visibleCount) {
             showMoreBtn.style.display = "inline-block";
@@ -252,6 +199,7 @@
             showMoreBtn.style.display = "none";
         }
     }
+
     // ===== CART =====
     function addToCart(product, size) {
         const idx = state.cart.findIndex(
@@ -297,61 +245,21 @@
     function subtotal() {
         return state.cart.reduce((s, i) => s + i.price * i.qty, 0);
     }
+
     // ===== DELIVERY =====
     let deliveryCost = 0;
     function updateDeliveryOption() {
-        if (els.dhakaRadio.checked) {
-            deliveryCost = 60;
-        } else if (els.outsideRadio.checked) {
-            deliveryCost = 120;
-        } else {
-            deliveryCost = 0;
-        }
+        if (els.dhakaRadio.checked) deliveryCost = 60;
+        else if (els.outsideRadio.checked) deliveryCost = 120;
+        else deliveryCost = 0;
         renderCart();
     }
-
     els.dhakaRadio?.addEventListener("change", updateDeliveryOption);
     els.outsideRadio?.addEventListener("change", updateDeliveryOption);
     function grandTotal() {
         return subtotal() + deliveryCost;
     }
-    // ===== MESSAGE =====
-    function messageText() {
-        if (state.cart.length === 0)
-            return `Hi! I want to order from ${SHOP_NAME}.`;
 
-        const lines = state.cart.map(
-            (i) =>
-                `• ${i.name} (size ${i.size}) x${i.qty} = ${CURRENCY}${(
-                    i.price * i.qty
-                ).toLocaleString("en-BD")}`
-        );
-
-        lines.push(
-            `Subtotal: ${CURRENCY}${subtotal().toLocaleString("en-BD")}`
-        );
-
-        if (deliveryCost > 0) {
-            lines.push(`Delivery: ${CURRENCY}${deliveryCost}`);
-        }
-
-        lines.push(`Total: ${CURRENCY}${grandTotal().toLocaleString("en-BD")}`);
-
-        const address = els.deliveryAddress?.value.trim();
-        if (address) {
-            lines.push(`Address: ${address}`);
-        }
-
-        return (
-            `Assalamualaikum!\r\n\nI want to order the following:\r\n` +
-            lines.join("\r\n")
-        );
-    }
-    function updateCheckoutLinks() {
-        const msg = messageText();
-        const encoded = encodeURIComponent(msg);
-        // no static href, handled on click
-    }
     function renderCart() {
         els.cartList.innerHTML = "";
 
@@ -386,19 +294,19 @@
         state.cart.forEach((i) => {
             const row = document.createElement("div");
             row.className = "cart-item";
-            row.innerHTML = `    
-              <div style="flex:1">    
-                <div style="font-weight:600">${i.name}</div>    
-                <div class="muted">Size ${i.size}</div>    
+            row.innerHTML = `
+              <div style="flex:1">
+                <div style="font-weight:600">${i.name}</div>
+                <div class="muted">Size ${i.size}</div>
                 <div style="margin-top:4px;font-weight:700">${CURRENCY}${(
                 i.price * i.qty
-            ).toLocaleString("en-BD")}</div>    
-              </div>    
-              <div class="qty">    
-                <button class="iconbtn" data-act="dec" type="button">−</button>    
-                <div style="width:28px;text-align:center">${i.qty}</div>    
-                <button class="iconbtn" data-act="inc" type="button">+</button>    
-              </div>    
+            ).toLocaleString("en-BD")}</div>
+              </div>
+              <div class="qty">
+                <button class="iconbtn" data-act="dec" type="button">−</button>
+                <div style="width:28px;text-align:center">${i.qty}</div>
+                <button class="iconbtn" data-act="inc" type="button">+</button>
+              </div>
               <button class="muted" data-act="rm" style="border:0;background:none;cursor:pointer" type="button">Remove</button>`;
             row.querySelector('[data-act="inc"]').addEventListener(
                 "click",
@@ -422,9 +330,8 @@
         if (els.grandTotal)
             els.grandTotal.textContent =
                 CURRENCY + grandTotal().toLocaleString("en-BD");
-
-        updateCheckoutLinks();
     }
+
     // ===== DRAWER =====
     function openDrawer() {
         els.drawer.classList.add("open");
@@ -440,37 +347,92 @@
         saveCart();
         closeDrawer();
     });
+
     // ===== FILTER HANDLERS =====
     els.q.addEventListener("input", () => {
         state.query = els.q.value;
-        visibleCount = 6; // reset on filter
+        visibleCount = 6;
         renderProducts();
     });
     els.color.addEventListener("change", () => {
         state.color = els.color.value;
-        visibleCount = 6; // reset on filter
+        visibleCount = 6;
         renderProducts();
     });
     els.size.addEventListener("change", () => {
         state.size = els.size.value;
-        visibleCount = 6; // reset on filter
+        visibleCount = 6;
         renderProducts();
     });
     els.maxPrice.addEventListener("input", () => {
         const v = els.maxPrice.value;
         state.maxPrice = v ? Number(v) : null;
-        visibleCount = 6; // reset on filter
+        visibleCount = 6;
         renderProducts();
     });
+
     // ===== SHOW MORE HANDLER =====
     document.getElementById("showMoreBtn").addEventListener("click", () => {
         visibleCount += 6;
         renderProducts();
     });
+
+    // ===== API HELPER =====
+    async function apiRequest(payload) {
+        const res = await fetch(API_URL, {
+            method: "POST",
+            body: JSON.stringify(payload),
+        });
+        return res.json();
+    }
+
+    // ===== CHECKOUT =====
+    els.checkoutBtn?.addEventListener("click", async () => {
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+        if (!user.userId) return (window.location.href = "login.html");
+        if (user.emailVerify !== "verified")
+            return alert("Please verify your email before placing an order.");
+
+        const deliveryOption = document.querySelector(
+            "input[name='deliveryOption']:checked"
+        );
+        const address = els.deliveryAddress.value.trim();
+        if (!deliveryOption || !address) {
+            return alert("Please select delivery option and provide address.");
+        }
+
+        const deliveryCost = deliveryOption.value === "dhaka" ? 60 : 120;
+        const subtotal = state.cart.reduce(
+            (sum, c) => sum + c.price * c.qty,
+            0
+        );
+        const total = subtotal + deliveryCost;
+
+        const res = await apiRequest({
+            action: "addOrder",
+            userId: user.userId,
+            details: state.cart
+                .map((c) => `${c.name} (size ${c.size}) x${c.qty}`)
+                .join(", "),
+            total,
+            address,
+        });
+
+        if (res.success) {
+            alert("Order placed successfully!");
+            state.cart = [];
+            localStorage.removeItem(CART_KEY);
+            window.location.href = "user.html";
+        } else {
+            alert(res.error || "Checkout failed.");
+        }
+    });
+
     // ===== FIRST RENDER =====
     loadCart();
     renderProducts();
     renderCart();
+
     // ===== JSON-LD =====
     const orgLd = {
         "@context": "https://schema.org",
@@ -493,7 +455,6 @@
             url: window.location.origin + "#" + p.id,
         },
     }));
-
     const ldScript = document.createElement("script");
     ldScript.type = "application/ld+json";
     ldScript.textContent = JSON.stringify([orgLd, ...productsLd]);

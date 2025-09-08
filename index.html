@@ -1,677 +1,690 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Tinkling Tales</title>
-    <meta name="description" content="Handpicked bridal, daily wear & festive bangles. Cash on Delivery in Dhaka, courier nationwide. Free size exchange within 3 days." />
-    <link rel="canonical" href="https://tinklingtales.netlify.app/" />
-    <!-- Favicon -->
-    <link rel="icon" type="image/jpg" sizes="32x32" href="/tinklingtales_logo.jpg">
-    <link rel="icon" type="image/jpg" sizes="16x16" href="/tinklingtales_logo.jpg">
-    <link rel="apple-touch-icon" href="/tinklingtales_logo.jpg">
-    <meta name="theme-color" content="#ffffff">
-    <meta property="og:title" content="Tinkling Tales — Handpicked Bangles" />
-    <meta property="og:description" content="Bridal sets, daily wear & festive collections. COD across the whole country." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://tinklingtales.netlify.app/" />
-    <meta property="og:image" content="https://tinklingtales.netlify.app/tinklingtales_logo.jpg" />
-    <meta property="og:image:alt" content="Tinkling Tales logo" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #f7f7fb;
-            --card: #ffffff;
-            --text: #111827;
-            --muted: #6b7280;
-            --brand: #111111;
-            --line: #e5e7eb;
-            --accent: #fef3c7;
-            --success: #065f46;
-            --radius: 18px;
-            --shadow: 0 10px 25px rgba(0, 0, 0, .06)
-        }
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Tinkling Tales</title>
+        <meta name="description" content="Handpicked bridal, daily wear & festive bangles. Cash on Delivery in Dhaka, courier nationwide. Free size exchange within 3 days." />
+        <link rel="canonical" href="https://tinklingtales.netlify.app/" />
+        <!-- Favicon -->
+        <link rel="icon" type="image/jpg" sizes="32x32" href="/tinklingtales_logo.jpg">
+        <link rel="icon" type="image/jpg" sizes="16x16" href="/tinklingtales_logo.jpg">
+        <link rel="apple-touch-icon" href="/tinklingtales_logo.jpg">
+        <meta name="theme-color" content="#ffffff">
+        <meta property="og:title" content="Tinkling Tales — Handpicked Bangles" />
+        <meta property="og:description" content="Bridal sets, daily wear & festive collections. COD across the whole country." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://tinklingtales.netlify.app/" />
+        <meta property="og:image" content="https://tinklingtales.netlify.app/tinklingtales_logo.jpg" />
+        <meta property="og:image:alt" content="Tinkling Tales logo" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <style>
+            :root {
+                --bg: #f7f7fb;
+                --card: #ffffff;
+                --text: #111827;
+                --muted: #6b7280;
+                --brand: #111111;
+                --line: #e5e7eb;
+                --accent: #fef3c7;
+                --success: #065f46;
+                --radius: 18px;
+                --shadow: 0 10px 25px rgba(0, 0, 0, .06)
+            }
 
-        * {
-            box-sizing: border-box
-        }
+            * {
+                box-sizing: border-box
+            }
 
-        body {
-            margin: 0;
-            font-family: "Inter", system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text)
-        }
+            body {
+                margin: 0;
+                font-family: "Inter", system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+                background: var(--bg);
+                color: var(--text)
+            }
 
-        a {
-            color: inherit
-        }
+            a {
+                color: inherit
+            }
 
-        img {
-            max-width: 100%;
-            display: block
-        }
+            img {
+                max-width: 100%;
+                display: block
+            }
 
-        .container {
-            max-width: 1160px;
-            margin: 0 auto;
-            padding: 0 16px
-        }
+            .container {
+                max-width: 1160px;
+                margin: 0 auto;
+                padding: 0 16px
+            }
 
-        header {
-            position: sticky;
-            top: 0;
-            z-index: 40;
-            background: rgba(255, 255, 255, .8);
-            backdrop-filter: blur(8px);
-            border-bottom: 1px solid var(--line)
-        }
+            header {
+                position: sticky;
+                top: 0;
+                z-index: 40;
+                background: rgba(255, 255, 255, .8);
+                backdrop-filter: blur(8px);
+                border-bottom: 1px solid var(--line)
+            }
 
-        .h-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 10px
-        }
+            .h-row {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px 10px
+            }
 
-        .brand {
-            font-weight: 800
-        }
+            .brand {
+                font-weight: 800
+            }
 
-        .spacer {
-            flex: 1
-        }
+            .spacer {
+                flex: 1
+            }
 
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 10px 14px;
-            border-radius: 12px;
-            border: 1px solid var(--line);
-            background: #fff;
-            cursor: pointer;
-            text-decoration: none
-        }
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                padding: 10px 14px;
+                border-radius: 12px;
+                border: 1px solid var(--line);
+                background: #fff;
+                cursor: pointer;
+                text-decoration: none
+            }
 
-        .btn.primary {
-            background: var(--brand);
-            color: #fff;
-            border-color: var(--brand)
-        }
+            .btn.primary {
+                background: var(--brand);
+                color: #fff;
+                border-color: var(--brand)
+            }
 
-        .btn.block {
-            width: 100%
-        }
+            .btn.block {
+                width: 100%
+            }
 
-        .hero {
-            background: linear-gradient(135deg, #fff7ed, #fff1f2);
-            border-bottom: 1px solid var(--line);
-            margin-bottom: 20px
-        }
-
-        .hero-grid {
-            display: grid;
-            grid-template-columns: 1.1fr .9fr;
-            gap: 28px;
-            padding: 48px 16px
-        }
-
-        .hero h1 {
-            font-size: clamp(28px, 3.5vw, 40px);
-            line-height: 1.1;
-            margin: 0 0 10px
-        }
-
-        .hero p {
-            color: var(--muted);
-            margin: 0 0 16px
-        }
-
-        .chip.new {
-            background: linear-gradient(135deg, #facc15, #f97316);
-            /* yellow → orange */
-            color: #111;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 2px 5px;
-            border-radius: 20px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
-        }
-
-        .chip.new svg {
-            color: #fff;
-            /* star icon in white */
-        }
-
-        main {
-            padding: 36px 0
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1.9fr 1fr;
-            gap: 24px
-        }
-
-        .notice {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #ecfdf5;
-            border: 1px solid #d1fae5;
-            color: var(--success);
-            padding: 10px 14px;
-            border-radius: var(--radius)
-        }
-
-        .filters {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 10px;
-            background: var(--card);
-            border: 1px solid var(--line);
-            padding: 12px;
-            border-radius: var(--radius)
-        }
-
-        .input,
-        select,
-        .number {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid var(--line);
-            border-radius: 12px;
-            padding: 10px 12px;
-            background: #fff
-        }
-
-        .input input,
-        .number input {
-            border: 0;
-            outline: 0;
-            width: 100%;
-            font: inherit
-        }
-
-        .input {
-            flex: 1;
-            min-width: 230px
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 16px
-        }
-
-        .card {
-            background: var(--card);
-            border: 1px solid var(--line);
-            border-radius: var(--radius);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column
-        }
-
-        .card .img {
-            aspect-ratio: 4/3;
-            overflow: hidden
-        }
-
-        .card .img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            background: #f3f4f6
-        }
-
-        .card .body {
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            flex: 1
-        }
-
-        .price {
-            font-weight: 700
-        }
-
-        .muted {
-            color: var(--muted);
-            font-size: 13px
-        }
-
-        .pills {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap
-        }
-
-        .pill {
-            padding: 6px 10px;
-            border-radius: 999px;
-            border: 1px solid var(--line);
-            background: #fff;
-            font-size: 13px;
-            cursor: pointer
-        }
-
-        .pill.active {
-            background: #111;
-            color: #fff;
-            border-color: #111
-        }
-
-        .tags {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap
-        }
-
-        .tag {
-            font-size: 12px;
-            background: #f3f4f6;
-            border-radius: 999px;
-            padding: 3px 10px
-        }
-
-        aside {
-            display: grid;
-            gap: 16px;
-            height: fit-content
-        }
-
-        .box {
-            background: var(--card);
-            border: 1px solid var(--line);
-            border-radius: var(--radius);
-            padding: 14px
-        }
-
-        .box h4 {
-            margin: 0 0 8px
-        }
-
-        .policy {
-            font-size: 14px;
-            color: #374151
-        }
-
-        footer {
-            border-top: 0 solid var(--line)
-        }
-
-        footer .row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: center;
-            justify-content: space-between;
-            padding: 18px 0;
-            color: #6b7280;
-            font-size: 14px
-        }
-
-        /* Cart drawer */
-        .drawer {
-            position: fixed;
-            inset: 0;
-            display: none
-        }
-
-        .drawer.open {
-            display: block
-        }
-
-        .backdrop {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, .3)
-        }
-
-        .panel {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100%;
-            max-width: 360px;
-            height: 100%;
-            background: #fff;
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column
-        }
-
-        .panel .head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px;
-            border-bottom: 1px solid var(--line)
-        }
-
-        .panel .content {
-            padding: 14px;
-            overflow: auto;
-            flex: 1
-        }
-
-        .panel .foot {
-            border-top: 1px solid var(--line);
-            padding: 14px
-        }
-
-        .cart-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border: 1px solid var(--line);
-            border-radius: 12px;
-            padding: 10px
-        }
-
-        .qty {
-            display: flex;
-            align-items: center;
-            gap: 6px
-        }
-
-        .iconbtn {
-            border: 1px solid var(--line);
-            background: #fff;
-            border-radius: 10px;
-            padding: 8px;
-            cursor: pointer
-        }
-
-        @media (max-width: 960px) {
-            .grid {
-                grid-template-columns: 1fr
+            .hero {
+                background: linear-gradient(135deg, #fff7ed, #fff1f2);
+                border-bottom: 1px solid var(--line);
+                margin-bottom: 20px
             }
 
             .hero-grid {
-                grid-template-columns: 1fr
+                display: grid;
+                grid-template-columns: 1.1fr .9fr;
+                gap: 28px;
+                padding: 48px 16px
+            }
+
+            .hero h1 {
+                font-size: clamp(28px, 3.5vw, 40px);
+                line-height: 1.1;
+                margin: 0 0 10px
+            }
+
+            .hero p {
+                color: var(--muted);
+                margin: 0 0 16px
+            }
+
+            .chip.new {
+                background: linear-gradient(135deg, #facc15, #f97316);
+                /* yellow → orange */
+                color: #111;
+                font-weight: 600;
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                padding: 2px 5px;
+                border-radius: 20px;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+            }
+
+            .chip.new svg {
+                color: #fff;
+                /* star icon in white */
+            }
+
+            main {
+                padding: 36px 0
+            }
+
+            .grid {
+                display: grid;
+                grid-template-columns: 1.9fr 1fr;
+                gap: 24px
+            }
+
+            .notice {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                background: #ecfdf5;
+                border: 1px solid #d1fae5;
+                color: var(--success);
+                padding: 10px 14px;
+                border-radius: var(--radius)
+            }
+
+            .filters {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 10px;
+                background: var(--card);
+                border: 1px solid var(--line);
+                padding: 12px;
+                border-radius: var(--radius)
+            }
+
+            .input,
+            select,
+            .number {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                padding: 10px 12px;
+                background: #fff
+            }
+
+            .input input,
+            .number input {
+                border: 0;
+                outline: 0;
+                width: 100%;
+                font: inherit
+            }
+
+            .input {
+                flex: 1;
+                min-width: 230px
             }
 
             .cards {
-                grid-template-columns: 1fr 1fr
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 16px
             }
-        }
 
-        @media (max-width: 640px) {
-            .cards {
-                grid-template-columns: 1fr
+            .card {
+                background: var(--card);
+                border: 1px solid var(--line);
+                border-radius: var(--radius);
+                overflow: hidden;
+                display: flex;
+                flex-direction: column
             }
-        }
 
-        @media (max-width: 640px) {
-            footer .row {
+            .card .img {
+                aspect-ratio: 4/3;
+                overflow: hidden
+            }
+
+            .card .img img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                background: #f3f4f6
+            }
+
+            .card .body {
+                padding: 14px;
+                display: flex;
                 flex-direction: column;
-                text-align: center;
-                gap: 8px
+                gap: 10px;
+                flex: 1
             }
 
-            footer .row div,
-            footer .row a {
-                justify-content: center
+            .price {
+                font-weight: 700
             }
-        }
 
-        .hero-grid {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            /* left takes all space, right shrinks to fit logo */
-            align-items: center;
-            /* vertical centering */
-            gap: 32px;
-            /* spacing between text and logo */
-            padding: 48px 16px;
-        }
+            .muted {
+                color: var(--muted);
+                font-size: 13px
+            }
 
-        .hero-logo {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+            .pills {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap
+            }
 
-        .hero-logo img {
-            width: 180px;
-            /* fixed badge size */
-            height: 180px;
-            border-radius: 50%;
-            /* make it perfectly round */
-            object-fit: cover;
-            /* crop to circle */
-            box-shadow: var(--shadow);
-            background: #fff;
-            /* optional: white frame around */
-            padding: 8px;
-            /* optional breathing space */
-        }
+            .pill {
+                padding: 6px 10px;
+                border-radius: 999px;
+                border: 1px solid var(--line);
+                background: #fff;
+                font-size: 13px;
+                cursor: pointer
+            }
 
-        /* Hide logo on mobile */
-        @media (max-width: 960px) {
+            .pill.active {
+                background: #111;
+                color: #fff;
+                border-color: #111
+            }
+
+            .tags {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap
+            }
+
+            .tag {
+                font-size: 12px;
+                background: #f3f4f6;
+                border-radius: 999px;
+                padding: 3px 10px
+            }
+
+            aside {
+                display: grid;
+                gap: 16px;
+                height: fit-content
+            }
+
+            .box {
+                background: var(--card);
+                border: 1px solid var(--line);
+                border-radius: var(--radius);
+                padding: 14px
+            }
+
+            .box h4 {
+                margin: 0 0 8px
+            }
+
+            .policy {
+                font-size: 14px;
+                color: #374151
+            }
+
+            footer {
+                border-top: 0 solid var(--line)
+            }
+
+            footer .row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+                align-items: center;
+                justify-content: space-between;
+                padding: 18px 0;
+                color: #6b7280;
+                font-size: 14px
+            }
+
+            /* Cart drawer */
+            .drawer {
+                position: fixed;
+                inset: 0;
+                display: none
+            }
+
+            .drawer.open {
+                display: block
+            }
+
+            .backdrop {
+                position: absolute;
+                inset: 0;
+                background: rgba(0, 0, 0, .3)
+            }
+
+            .panel {
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 100%;
+                max-width: 360px;
+                height: 100%;
+                background: #fff;
+                box-shadow: var(--shadow);
+                display: flex;
+                flex-direction: column
+            }
+
+            .panel .head {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 14px;
+                border-bottom: 1px solid var(--line)
+            }
+
+            .panel .content {
+                padding: 14px;
+                overflow: auto;
+                flex: 1
+            }
+
+            .panel .foot {
+                border-top: 1px solid var(--line);
+                padding: 14px
+            }
+
+            .cart-item {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                padding: 10px
+            }
+
+            .qty {
+                display: flex;
+                align-items: center;
+                gap: 6px
+            }
+
+            .iconbtn {
+                border: 1px solid var(--line);
+                background: #fff;
+                border-radius: 10px;
+                padding: 8px;
+                cursor: pointer
+            }
+
+            @media (max-width: 960px) {
+                .grid {
+                    grid-template-columns: 1fr
+                }
+
+                .hero-grid {
+                    grid-template-columns: 1fr
+                }
+
+                .cards {
+                    grid-template-columns: 1fr 1fr
+                }
+            }
+
+            @media (max-width: 640px) {
+                .cards {
+                    grid-template-columns: 1fr
+                }
+            }
+
+            @media (max-width: 640px) {
+                footer .row {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 8px
+                }
+
+                footer .row div,
+                footer .row a {
+                    justify-content: center
+                }
+            }
+
+            .hero-grid {
+                display: grid;
+                grid-template-columns: 1fr auto;
+                /* left takes all space, right shrinks to fit logo */
+                align-items: center;
+                /* vertical centering */
+                gap: 32px;
+                /* spacing between text and logo */
+                padding: 48px 16px;
+            }
+
             .hero-logo {
-                display: none;
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
-        }
 
-        .cart-badge {
-            position: absolute;
-            top: -4px;
-            /* bump it slightly above */
-            right: -4px;
-            /* push to corner */
-            background: #ef4444;
-            color: #fff;
-            font-size: 12px;
-            font-weight: 600;
-            border-radius: 999px;
-            padding: 2px 6px;
-            line-height: 1;
-            display: none;
-            min-width: 18px;
-            text-align: center;
-        }
+            .hero-logo img {
+                width: 180px;
+                /* fixed badge size */
+                height: 180px;
+                border-radius: 50%;
+                /* make it perfectly round */
+                object-fit: cover;
+                /* crop to circle */
+                box-shadow: var(--shadow);
+                background: #fff;
+                /* optional: white frame around */
+                padding: 8px;
+                /* optional breathing space */
+            }
 
-        #cartBtn {
-            position: relative;
-            /* ensures badge positions relative to button */
-        }
+            /* Hide logo on mobile */
+            @media (max-width: 960px) {
+                .hero-logo {
+                    display: none;
+                }
+            }
 
-        #toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #111827;
-            color: #fff;
-            padding: 10px 16px;
-            border-radius: 12px;
-            font-size: 14px;
-            display: none;
-            opacity: 0;
-            z-index: 9999;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
-            transition: opacity .4s ease;
-        }
-    </style>
-</head>
+            .cart-badge {
+                position: absolute;
+                top: -4px;
+                /* bump it slightly above */
+                right: -4px;
+                /* push to corner */
+                background: #ef4444;
+                color: #fff;
+                font-size: 12px;
+                font-weight: 600;
+                border-radius: 999px;
+                padding: 2px 6px;
+                line-height: 1;
+                display: none;
+                min-width: 18px;
+                text-align: center;
+            }
 
-<body>
-    <header>
-        <div class="container h-row">
-            <div style="font-size:18px" class="brand" id="shopName">Tinkling Tales</div>
-            <span class="spacer"></span>
-            <a class="btn" id="fbLink" href="https://www.facebook.com/tinklingtales" target="_blank" rel="noreferrer" aria-label="Open Facebook page">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
-                    <path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2V9.5c0-2 1.2-3.1 3-3.1.9 0 1.8.1 1.8.1v2h-1c-1 0-1.3.6-1.3 1.2v1.4h2.3L14 14.9h-1.8v7A10 10 0 0 0 22 12" />
-                </svg> Facebook </a>
-            <button class="btn" id="cartBtn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="drawer">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                    <circle cx="9" cy="21" r="1"></circle>
-                    <circle cx="20" cy="21" r="1"></circle>
-                    <path d="M1 1h4l2.68 12.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                </svg> Cart <span id="cartBadge" class="cart-badge">0</span>
-            </button>
-        </div>
-    </header>
-    <section class="hero">
-        <div class="container hero-grid">
-            <div>
-                <h1>Handpicked Bangles for Every Occasion</h1>
-                <p>Bridal sets, daily wear & festive collections. Cash on delivery across Bangladesh.</p>
-                <div style="display:flex;gap:10px;flex-wrap:wrap">
-                    <a class="btn primary" id="msgBtn" href="#" target="_blank" rel="noreferrer">Chat on Messenger</a>
-                    <a class="btn" id="waBtn" href="#" target="_blank" rel="noreferrer" style="display:none">WhatsApp</a>
-                </div>
-                <div style="margin-top:10px;display:grid;gap:6px;font-size:14px;color:#374151">
-                    <span>• Free size exchange within 3 days</span>
-                    <span>• COD across the whole country</span>
-                    <span>• Guaranteed premium quality product</span>
-                </div>
+            #cartBtn {
+                position: relative;
+                /* ensures badge positions relative to button */
+            }
+
+            #toast {
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #111827;
+                color: #fff;
+                padding: 10px 16px;
+                border-radius: 12px;
+                font-size: 14px;
+                display: none;
+                opacity: 0;
+                z-index: 9999;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
+                transition: opacity .4s ease;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="container h-row">
+                <div style="font-size:18px" class="brand" id="shopName">Tinkling Tales</div>
+                <span class="spacer"></span>
+                <!-- Facebook -->
+                <a id="fbLink" href="https://www.facebook.com/tinklingtales" target="_blank" rel="noreferrer" aria-label="Facebook">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2V9.5c0-2 1.2-3.1 3-3.1.9 0 1.8.1 1.8.1v2h-1c-1 0-1.3.6-1.3 1.2v1.4h2.3L14 14.9h-1.8v7A10 10 0 0 0 22 12" />
+                    </svg>
+                </a>
+                <!-- Instagram -->
+                <a id="igLink" href="https://www.instagram.com/tinklingtales" target="_blank" rel="noreferrer" aria-label="Instagram">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M7 2C4.2 2 2 4.2 2 7v10c0 2.8 2.2 5 5 5h10c2.8 0 5-2.2 5-5V7c0-2.8-2.2-5-5-5H7zm0 2h10c1.7 0 3 1.3 3 3v10c0 1.7-1.3 3-3 3H7c-1.7 0-3-1.3-3-3V7c0-1.7 1.3-3 3-3zm5 2.8A5.2 5.2 0 1 0 17.2 12 5.2 5.2 0 0 0 12 6.8zm0 2A3.2 3.2 0 1 1 8.8 12 3.2 3.2 0 0 1 12 8.8zM17.5 6a1 1 0 1 0 1 1 1 1 0 0 0-1-1z" />
+                    </svg>
+                </a>
+                <!-- User -->
+                <a id="userLink" href="login.html" aria-label="User">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z" />
+                    </svg>
+                </a>
+                <!-- Cart -->
+                <button id="cartBtn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="drawer">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 12.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span id="cartBadge" class="cart-badge">0</span>
+                </button>
             </div>
-            <!-- Right column: logo, hidden on small screens -->
-            <div class="hero-logo">
-                <img src="/tinklingtales_logo.jpg" alt="Tinkling Tales logo" />
-            </div>
-        </div>
-    </section>
-    <main class="container" id="main">
-        <div class="grid">
-            <section style="display:grid;gap:14px">
-                <div class="notice" role="status" aria-live="polite">
-                    <span class="chip new">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2 15 8l6 1-4 5 1 7-6-3-6 3 1-7-4-5 6-1z" />
-                        </svg> Free </span>
-                    <span style="font-size:14px">Free delivery on orders above <strong>৳1,500</strong></span>
-                </div>
-                <form class="filters" id="filters" onsubmit="return false" aria-label="Filters">
-                    <div class="input"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <path d="m21 21-4.3-4.3"></path>
-                        </svg>
-                        <input id="q" name="q" placeholder="Search here…" autocomplete="off" />
+        </header>
+        <section class="hero">
+            <div class="container hero-grid">
+                <div>
+                    <h1>Handpicked Bangles for Every Occasion</h1>
+                    <p>Bridal sets, daily wear & festive collections. Cash on delivery across Bangladesh.</p>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap">
+                        <a class="btn primary" id="msgBtn" href="#" target="_blank" rel="noreferrer">Chat on Messenger</a>
+                        <a class="btn" id="waBtn" href="#" target="_blank" rel="noreferrer" style="display:none">WhatsApp</a>
                     </div>
-                    <select id="color" name="color" aria-label="Filter by color">
-                        <option value="">All colors</option>
-                    </select>
-                    <select id="size" name="size" aria-label="Filter by size">
-                        <option value="">Any size</option>
-                    </select>
-                    <label class="number" for="maxPrice" aria-label="Max price">
-                        <span class="muted" style="font-size:14px">Max price</span>
-                        <input id="maxPrice" name="maxPrice" inputmode="numeric" pattern="[0-9]*" type="number" min="0" placeholder="e.g. 1000" />
-                    </label>
-                </form>
-                <div id="cards" class="cards" aria-live="polite"></div>
-                <div id="empty" class="box" style="display:none;text-align:center;color:#6b7280">No items match your filters.</div>
-                <div style="text-align:center;margin-top:20px">
-                  <button id="showMoreBtn" class="btn">Show More</button>
+                    <div style="margin-top:10px;display:grid;gap:6px;font-size:14px;color:#374151">
+                        <span>• Free size exchange within 3 days</span>
+                        <span>• COD across the whole country</span>
+                        <span>• Guaranteed premium quality product</span>
+                    </div>
                 </div>
-            </section>
-            <aside>
-                <div class="box">
-                    <h4>Bangle Size Guide</h4>
-                    <div class="policy">
-                        <p>Measure the widest part of your hand (around knuckles). Match circumference to size:</p>
-                        <ul style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;font-size:13px">
-                            <li>2.2 ≈ 6.9 cm</li>
-                            <li>2.4 ≈ 7.2 cm</li>
-                            <li>2.6 ≈ 7.5 cm</li>
-                            <li>2.8 ≈ 7.9 cm</li>
-                            <li>3.0 ≈ 8.2 cm</li>
-                        </ul>
-                        <p>While measuring, please consider the bangle width and allow room for comfort.</p>
-                        <div class="muted" style="margin-top:6px">Need help? <a href="https://www.facebook.com/tinklingtales">Message</a> us on Facebook.</div>
-                        <div class="muted" style="font-size:13px;margin-top:8px">
-                            More info in our <a href="/return-policy.html">Return Policy</a>.
+                <!-- Right column: logo, hidden on small screens -->
+                <div class="hero-logo">
+                    <img src="/tinklingtales_logo.jpg" alt="Tinkling Tales logo" />
+                </div>
+            </div>
+        </section>
+        <main class="container" id="main">
+            <div class="grid">
+                <section style="display:grid;gap:14px">
+                    <div class="notice" role="status" aria-live="polite">
+                        <span class="chip new">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2 15 8l6 1-4 5 1 7-6-3-6 3 1-7-4-5 6-1z" />
+                            </svg> Free </span>
+                        <span style="font-size:14px">Free delivery on orders above <strong>৳1,500</strong>
+                        </span>
+                    </div>
+                    <form class="filters" id="filters" onsubmit="return false" aria-label="Filters">
+                        <div class="input">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.3-4.3"></path>
+                            </svg>
+                            <input id="q" name="q" placeholder="Search here…" autocomplete="off" />
+                        </div>
+                        <select id="color" name="color" aria-label="Filter by color">
+                            <option value="">All colors</option>
+                        </select>
+                        <select id="size" name="size" aria-label="Filter by size">
+                            <option value="">Any size</option>
+                        </select>
+                        <label class="number" for="maxPrice" aria-label="Max price">
+                            <span class="muted" style="font-size:14px">Max price</span>
+                            <input id="maxPrice" name="maxPrice" inputmode="numeric" pattern="[0-9]*" type="number" min="0" placeholder="e.g. 1000" />
+                        </label>
+                    </form>
+                    <div id="cards" class="cards" aria-live="polite"></div>
+                    <div id="empty" class="box" style="display:none;text-align:center;color:#6b7280">No items match your filters.</div>
+                    <div style="text-align:center;margin-top:20px">
+                        <button id="showMoreBtn" class="btn">Show More</button>
+                    </div>
+                </section>
+                <aside>
+                    <div class="box">
+                        <h4>Bangle Size Guide</h4>
+                        <div class="policy">
+                            <p>Measure the widest part of your hand (around knuckles). Match circumference to size:</p>
+                            <ul style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;font-size:13px">
+                                <li>2.2 ≈ 6.9 cm</li>
+                                <li>2.4 ≈ 7.2 cm</li>
+                                <li>2.6 ≈ 7.5 cm</li>
+                                <li>2.8 ≈ 7.9 cm</li>
+                                <li>3.0 ≈ 8.2 cm</li>
+                            </ul>
+                            <p>While measuring, please consider the bangle width and allow room for comfort.</p>
+                            <div class="muted" style="margin-top:6px">Need help? <a href="https://www.facebook.com/tinklingtales">Message</a> us on Facebook. </div>
+                            <div class="muted" style="font-size:13px;margin-top:8px"> More info in our <a href="/return-policy.html">Return Policy</a>. </div>
                         </div>
                     </div>
-                </div>
-                <div class="box">
-                    <h4>Shipping & Payment</h4>
-                    <ul class="policy" style="display:grid;gap:6px">
-                        <li>Cash on Delivery nationwide</li>
-                        <li>No need of any advance payment (except delivery cost)</li>
-                        <li>Orders can be confirmed through Messenger/Instagram</li>
-                    </ul>
-                </div>
-                <div class="box">
-                    <h4>Follow Us</h4>
-                    <a id="fbFollow" class="policy" href="https://www.facebook.com/tinklingtales" target="_blank" rel="noreferrer">facebook.com/tinklingtales</a>
-                    <a id="fbFollow" class="policy" href="https://www.instagram.com/tinklingtales" target="_blank" rel="noreferrer">www.instagram.com/tinklingtales</a>
-                </div>
-            </aside>
-        </div>
-    </main>
-    <footer>
-        <div class="container row">
-            <div>© <span id="year"></span> <span id="shopName2">Tinkling Tales</span>. All rights reserved.</div>
-            <div style="display:flex;gap:12px">
-                <a class="muted" href="/return-policy.html" id="returnPolicyLink">Return Policy</a>
-                <a class="muted" href="/terms.html">Terms</a>
-                <a class="muted" id="contactLink" href="/contact.html">Contact</a>
+                    <div class="box">
+                        <h4>Shipping & Payment</h4>
+                        <ul class="policy" style="display:grid;gap:6px">
+                            <li>Cash on Delivery nationwide</li>
+                            <li>No need of any advance payment (except delivery cost)</li>
+                            <li>Orders can be confirmed through Messenger/Instagram</li>
+                        </ul>
+                    </div>
+                    <div class="box">
+                        <h4>Follow Us</h4>
+                        <a id="fbFollow" class="policy" href="https://www.facebook.com/tinklingtales" target="_blank" rel="noreferrer">facebook.com/tinklingtales</a>
+                        <a id="fbFollow" class="policy" href="https://www.instagram.com/tinklingtales" target="_blank" rel="noreferrer">www.instagram.com/tinklingtales</a>
+                    </div>
+                </aside>
             </div>
-        </div>
-    </footer> <!-- Cart Drawer -->
-    <div id="drawer" class="drawer" aria-hidden="true">
-        <div class="backdrop" id="backdrop" tabindex="-1"></div>
-        <div class="panel" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
-            <div class="head">
-                <strong id="cartTitle">Your Cart</strong>
-                <button class="iconbtn" id="closeDrawer" aria-label="Close" type="button">✕</button>
-            </div>
-            <div class="content">
-                <div id="cartEmpty" class="muted" style="text-align:center;margin-top:24px">Your cart is empty.</div>
-                <div id="cartList" style="display:grid;gap:10px"></div>
-            </div>
-            <div class="foot">
-                <div style="display:flex;align-items:center;justify-content:space-between">
-                    <span class="muted">Subtotal</span>
-                    <strong id="subtotal">৳0</strong>
+        </main>
+        <footer>
+            <div class="container row">
+                <div>© <span id="year"></span>
+                    <span id="shopName2">Tinkling Tales</span>. All rights reserved.
                 </div>
-                <!-- Delivery options -->
-                <div style="margin-top:10px;display:grid;gap:8px">
+                <div style="display:flex;gap:12px">
+                    <a class="muted" href="/return-policy.html" id="returnPolicyLink">Return Policy</a>
+                    <a class="muted" href="/terms.html">Terms</a>
+                    <a class="muted" id="contactLink" href="/contact.html">Contact</a>
+                </div>
+            </div>
+        </footer>
+        <!-- Cart Drawer -->
+        <div id="drawer" class="drawer" aria-hidden="true">
+            <div class="backdrop" id="backdrop" tabindex="-1"></div>
+            <div class="panel" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+                <div class="head">
+                    <strong id="cartTitle">Your Cart</strong>
+                    <button class="iconbtn" id="closeDrawer" aria-label="Close" type="button">✕</button>
+                </div>
+                <div class="content">
+                    <div id="cartEmpty" class="muted" style="text-align:center;margin-top:24px">Your cart is empty.</div>
+                    <div id="cartList" style="display:grid;gap:10px"></div>
+                </div>
+                <div class="foot">
+                    <div style="display:flex;align-items:center;justify-content:space-between">
+                        <span class="muted">Subtotal</span>
+                        <strong id="subtotal">৳0</strong>
+                    </div>
+                    <!-- Delivery options -->
                     <div style="margin-top:10px;display:grid;gap:8px">
-                    <label style="display:flex;align-items:center;gap:6px;font-size:14px">
-                        <input type="radio" name="deliveryOption" value="dhaka" id="dhakaRadio" /> Delivery inside Dhaka (৳60)
-                    </label>
-                    <label style="display:flex;align-items:center;gap:6px;font-size:14px">
-                        <input type="radio" name="deliveryOption" value="outside" id="outsideRadio" /> Delivery outside Dhaka (৳120)
-                    </label>
-                    <input id="deliveryAddress" type="text" placeholder="Delivery Address" class="input" style="width:100%;font-size:14px" />
-                </div>
-                </div>
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
-                    <span class="muted">Delivery</span>
-                    <strong id="deliveryCost">৳0</strong>
-                </div>
-                <div class="muted" style="font-size:13px;margin-top:6px">
-                    See our <a href="/return-policy.html">Return Policy</a> for exchange details.
-                </div>
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
-                    <span class="muted">Total</span>
-                    <strong id="grandTotal">৳0</strong>
-                </div>
-                <div style="display:grid;gap:8px;margin-top:10px">
-                   <a id="checkoutMessenger" class="btn primary block" href="about:blank">Checkout via Messenger</a>
-                    <a id="checkoutWhatsApp" class="btn block" href="#" target="_blank" rel="noreferrer" style="display:none">Checkout via WhatsApp</a>
+                        <div style="margin-top:10px;display:grid;gap:8px">
+                            <label style="display:flex;align-items:center;gap:6px;font-size:14px">
+                                <input type="radio" name="deliveryOption" value="dhaka" id="dhakaRadio" /> Delivery inside Dhaka (৳60) </label>
+                            <label style="display:flex;align-items:center;gap:6px;font-size:14px">
+                                <input type="radio" name="deliveryOption" value="outside" id="outsideRadio" /> Delivery outside Dhaka (৳120) </label>
+                            <input id="deliveryAddress" type="text" placeholder="Delivery Address" class="input" style="width:100%;font-size:14px" />
+                        </div>
+                    </div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+                        <span class="muted">Delivery</span>
+                        <strong id="deliveryCost">৳0</strong>
+                    </div>
+                    <div class="muted" style="font-size:13px;margin-top:6px"> See our <a href="/return-policy.html">Return Policy</a> for exchange details. </div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
+                        <span class="muted">Total</span>
+                        <strong id="grandTotal">৳0</strong>
+                    </div>
+                    <div style="display:grid;gap:8px;margin-top:10px">
+                        <button id="checkoutBtn" class="btn primary block">Checkout</button>
+                    </div>
                 </div>
             </div>
+            <script src="index.js"></script>
+            <div id="toast">Added to cart</div>
         </div>
-        <script src="index.js"></script>
-        <div id="toast">Added to cart</div>
-    </div>  
-</body>
+    </body>
 </html>

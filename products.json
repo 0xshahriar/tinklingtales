@@ -6,7 +6,7 @@
     "colors": ["Red", "Ruby"],
     "sizes": ["2.2", "2.4", "2.6", "2.8"],
     "finish": "Glossy",
-    "image": "/ranga_roop.jpg",
+    "image": "/images/ranga_roop.jpg",
     "tags": ["Bridal", "Premium"]
   },
   {
@@ -16,7 +16,7 @@
     "colors": ["Red", "Golden"],
     "sizes": ["2.2", "2.4", "2.6", "2.8"],
     "finish": "Matte",
-    "image": "/monihar_melody.jpg",
+    "image": "/images/monihar_melody.jpg",
     "tags": ["Daily Wear", "Lightweight"]
   },
   {
@@ -26,7 +26,7 @@
     "colors": ["Golden", "Red", "Brown"],
     "sizes": ["2.2", "2.4", "2.6"],
     "finish": "Matte",
-    "image": "/shonali_shaj.jpg",
+    "image": "/images/shonali_shaj.jpg",
     "tags": ["Festive", "Handcrafted"]
   },
   {
@@ -36,7 +36,7 @@
     "colors": ["White", "Golden", "Glass"],
     "sizes": ["2.2", "2.4", "2.6", "2.8"],
     "finish": "Glossy",
-    "image": "/shuvro_kushum.jpg",
+    "image": "/images/shuvro_kushum.jpg",
     "tags": ["Festive", "Handcrafted"]
   },
   {
@@ -46,7 +46,7 @@
   "colors": ["Black", "Golden", "White"],
   "sizes": ["2.2", "2.4", "2.6", "2.8"],
   "finish": "Glossy",
-  "image": "/shyamolika.jpg",
+  "image": "/images/shyamolika.jpg",
   "tags": ["Bridal", "Festive", "Elegant"]
   },
   {
@@ -56,7 +56,17 @@
   "colors": ["Pink", "Golden"],
   "sizes": ["2.2", "2.4", "2.6", "2.8"],
   "finish": "Glossy",
-  "image": "/ranga_rojoni.jpg",
+  "image": "/images/ranga_rojoni.jpg",
   "tags": ["Festive", "Handcrafted", "Vibrant"]
+  },
+  {
+  "id": "P007",
+  "name": "Roktoshoba",
+  "price": 400,
+  "colors": ["Red", "Golden"],
+  "sizes": ["2.2", "2.4", "2.6", "2.8"],
+  "finish": "Glossy",
+  "image": "/images/roktoshoba.jpg",
+  "tags": ["Festive", "Bridal"]
   }
 ]
