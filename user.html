@@ -557,7 +557,7 @@
                       <p>${o.details}</p>
                       <p>Total: ${o.total}</p>
                       <p>Status: <span class="${statusClass(o.status)}">${o.status}</span></p>
-                      <p class="muted">${o.dateTime}</p>
+                      <p class="muted">${new Date(o.dateTime).toLocaleString()}</p>
                     `;
 
                     const viewBtn = document.createElement("button");
