@@ -2,7 +2,7 @@
     const SHOP_NAME = "Tinkling Tales";
     const FACEBOOK_PAGE_URL = "https://www.facebook.com/tinklingtales";
     const CURRENCY = "৳";
-    const API_URL = "https://script.google.com/macros/s/AKfycbyMQRrvsac_lBvYOlt5gtaO4CKHTea7_UjeUC2VluTrPCKaYOERrpXV5jhkgoJPnYzdPA/exec"; // ✅ replace with your Apps Script URL
+    const API_URL = "https://script.google.com/macros/s/AKfycbx9-oA0QQK70VgfeYvzgOd2kGLRblHd1sf1JZs70Dq4lZkWTRIsT4epviZnwoodNC3ckg/exec"; // ✅ replace with your Apps Script URL
 
     // --- Products ---
     const PRODUCTS = [];
