@@ -311,7 +311,7 @@
                 font-size: 18px;
                 cursor: pointer;
                 border-radius: 50%;
-                z-index: 2;
+                z-index: 5;
                 transition: all 0.2s ease;
                 display: flex;
                 align-items: center;
@@ -340,7 +340,7 @@
                 transform: translateX(-50%);
                 display: flex;
                 gap: 6px;
-                z-index: 2;
+                z-index: 5;
             }
 
             .dot {
@@ -357,98 +357,29 @@
                 transform: scale(1.2);
             }
 
-            /* Top Sellers Section */
-            .top-sellers {
-                background: linear-gradient(135deg, #fef3c7, #fde68a);
-                border-bottom: 1px solid var(--line);
-                margin-bottom: 20px;
-                padding: 32px 0;
-            }
-
-            .section-title {
-                text-align: center;
-                font-size: 24px;
-                font-weight: 700;
-                margin: 0 0 24px 0;
-                color: #1f2937;
-            }
-
-            .top-seller-cards {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 16px;
-                max-width: 900px;
-                margin: 0 auto;
-            }
-
-            .top-seller-card {
-                background: var(--card);
-                border: 2px solid #fbbf24;
-                border-radius: var(--radius);
-                overflow: hidden;
-                display: flex;
-                flex-direction: column;
-                transition: all 0.2s ease;
-                position: relative;
-            }
-
-            .top-seller-card::before {
-                content: "🏆";
+            /* Top Sale Badge for Product Cards */
+            .top-sale-badge {
                 position: absolute;
                 top: 8px;
-                right: 8px;
-                font-size: 20px;
-                z-index: 2;
-                background: rgba(255, 255, 255, 0.9);
-                border-radius: 50%;
-                width: 32px;
-                height: 32px;
+                left: 8px;
+                background: linear-gradient(135deg, #f59e0b, #d97706);
+                color: white;
+                padding: 6px 10px;
+                border-radius: 12px;
+                font-size: 11px;
+                font-weight: 700;
+                z-index: 6;
                 display: flex;
                 align-items: center;
-                justify-content: center;
+                gap: 4px;
+                box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
             }
 
-            .top-seller-card:hover {
-                transform: translateY(-4px);
-                box-shadow: 0 20px 40px rgba(0, 0, 0, .15);
-                border-color: #f59e0b;
-            }
-
-            .top-seller-card .img {
-                aspect-ratio: 4/3;
-                overflow: hidden;
-            }
-
-            .top-seller-card .img img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                background: #f3f4f6;
-            }
-
-            .top-seller-card .body {
-                padding: 14px;
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                flex: 1;
-            }
-
-            .sales-badge {
-                background: #ef4444;
-                color: white;
-                font-size: 12px;
-                font-weight: 600;
-                padding: 2px 8px;
-                border-radius: 12px;
-                align-self: flex-start;
-            }
-
-            @media (max-width: 768px) {
-                .top-seller-cards {
-                    grid-template-columns: 1fr;
-                    gap: 12px;
-                }
+            .top-sale-badge::before {
+                content: "🏆";
+                font-size: 10px;
             }
 
             .card .body {
@@ -780,13 +711,6 @@
             </div>
         </section>
         
-        <!-- Top Sellers Section -->
-        <section id="topSellers" class="top-sellers">
-            <div class="container">
-                <h2 class="section-title">🔥 Top Sellers This Week</h2>
-                <div id="topSellerCards" class="top-seller-cards"></div>
-            </div>
-        </section>
         
         <main class="container" id="main">
             <div class="grid">
