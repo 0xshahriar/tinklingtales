@@ -146,8 +146,6 @@
 
         const toShow = results.slice(0, visibleCount);
         
-        // Get top selling product for badge
-        const topSellingProduct = getTopSellingProduct();
 
         toShow.forEach((p) => {
             const card = document.createElement("article");
@@ -170,7 +168,6 @@
                             </div>
                         ` : ''}
                     </div>
-                    ${topSellingProduct && topSellingProduct.id === p.id ? '<div class="top-sale-badge">Top Sale</div>' : ''}
                 </div>
                 <div class="body">
                   <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
@@ -223,6 +220,11 @@
             showMoreBtn.style.display = "inline-block";
         } else {
             showMoreBtn.style.display = "none";
+        }
+        
+        // Update scroll-to-top threshold after products are rendered
+        if (window.updateScrollThreshold) {
+            setTimeout(() => window.updateScrollThreshold(), 50);
         }
     }
 
@@ -295,11 +297,55 @@
         });
     }
 
-    // ===== TOP SALE BADGE =====
-    function getTopSellingProduct() {
-        return PRODUCTS
-            .filter(p => p.weeklySales && p.weeklySales > 0)
-            .sort((a, b) => b.weeklySales - a.weeklySales)[0];
+    // ===== SCROLL TO TOP =====
+    function setupScrollToTop() {
+        const scrollBtn = document.getElementById('scrollToTop');
+        let isVisible = false;
+        let thresholdPosition = 0;
+
+        function updateThreshold() {
+            const cards = document.querySelectorAll('#cards .card');
+            if (cards.length >= 3) {
+                thresholdPosition = cards[2].offsetTop;
+            } else if (cards.length > 0) {
+                // If less than 3 products, use the last product position
+                thresholdPosition = cards[cards.length - 1].offsetTop;
+            } else {
+                thresholdPosition = window.innerHeight * 2; // Fallback
+            }
+        }
+
+        function toggleScrollButton() {
+            const scrollY = window.scrollY;
+            const shouldShow = scrollY > thresholdPosition;
+            
+            if (shouldShow && !isVisible) {
+                scrollBtn.classList.add('visible');
+                isVisible = true;
+            } else if (!shouldShow && isVisible) {
+                scrollBtn.classList.remove('visible');
+                isVisible = false;
+            }
+        }
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+            // Hide button after clicking
+            scrollBtn.classList.remove('visible');
+            isVisible = false;
+        }
+
+        // Update threshold when products are rendered
+        window.addEventListener('scroll', toggleScrollButton);
+        scrollBtn.addEventListener('click', scrollToTop);
+        
+        // Update threshold after products load
+        setTimeout(updateThreshold, 100);
+        
+        return { updateThreshold };
     }
 
     // ===== CART =====
@@ -587,6 +633,10 @@
     loadCart();
     renderProducts();
     renderCart();
+    const scrollToTop = setupScrollToTop();
+    
+    // Store reference for updating threshold after product renders
+    window.updateScrollThreshold = scrollToTop.updateThreshold;
 
     // ===== JSON-LD =====
     const orgLd = {
