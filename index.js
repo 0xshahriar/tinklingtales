@@ -405,24 +405,52 @@
     els.dhakaRadio?.addEventListener("change", updateDeliveryOption);
     els.outsideRadio?.addEventListener("change", updateDeliveryOption);
     
-    // Auto-select delivery option based on address
-    els.deliveryAddress?.addEventListener("input", () => {
-        const address = els.deliveryAddress.value.trim();
+    // Auto-select delivery option based on address and control radio buttons
+    function handleDeliveryAddressChange() {
+        const address = els.deliveryAddress?.value.trim() || "";
         if (address) {
             // Check if address contains "Dhaka" (case insensitive)
-            if (address.toLowerCase().includes("dhaka")) {
-                if (els.dhakaRadio && !els.dhakaRadio.disabled) {
+            const containsDhaka = address.toLowerCase().includes("dhaka");
+            
+            if (containsDhaka) {
+                // Enable Dhaka radio and auto-select it
+                if (els.dhakaRadio) {
+                    els.dhakaRadio.disabled = false;
                     els.dhakaRadio.checked = true;
                     updateDeliveryOption();
                 }
+                // Enable outside Dhaka radio
+                if (els.outsideRadio) {
+                    els.outsideRadio.disabled = false;
+                }
             } else {
-                if (els.outsideRadio && !els.outsideRadio.disabled) {
+                // Disable Dhaka radio and auto-select outside Dhaka
+                if (els.dhakaRadio) {
+                    els.dhakaRadio.disabled = true;
+                    els.dhakaRadio.checked = false;
+                }
+                // Enable and select outside Dhaka radio
+                if (els.outsideRadio) {
+                    els.outsideRadio.disabled = false;
                     els.outsideRadio.checked = true;
                     updateDeliveryOption();
                 }
             }
+        } else {
+            // Re-enable both options when address is empty
+            if (els.dhakaRadio) {
+                els.dhakaRadio.disabled = false;
+            }
+            if (els.outsideRadio) {
+                els.outsideRadio.disabled = false;
+            }
         }
-    });
+    }
+    
+    els.deliveryAddress?.addEventListener("input", handleDeliveryAddressChange);
+    
+    // Apply initial state based on any pre-filled address
+    handleDeliveryAddressChange();
     function grandTotal() {
         return subtotal() + deliveryCost;
     }

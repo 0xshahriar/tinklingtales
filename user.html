@@ -262,6 +262,37 @@
                 font-style: italic;
                 color: #374151;
             }
+
+            /* Loading Animation */
+            .loading-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 40px 20px;
+                text-align: center;
+            }
+
+            .loading-spinner {
+                width: 40px;
+                height: 40px;
+                border: 4px solid #f3f4f6;
+                border-top: 4px solid #1f2937;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin-bottom: 16px;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            .loading-text {
+                color: #6b7280;
+                font-size: 16px;
+                font-weight: 500;
+            }
             .edit-icon {
                 cursor: pointer;
                 width: 18px;
@@ -692,13 +723,31 @@
                 let visibleCount = 6;
 
                 async function loadOrders(initial = true) {
+                  const ordersDiv = document.getElementById("orders");
+                  
                   if (initial) {
-                    const res = await apiRequest({ action:"getOrders", userId:user.userId });
-                    allOrders = res || [];
-                    visibleCount = 6;
+                    // Show loading animation
+                    ordersDiv.innerHTML = `
+                      <div class="loading-container">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-text">Loading your purchase history...</div>
+                      </div>
+                    `;
+                    
+                    try {
+                      const res = await apiRequest({ action:"getOrders", userId:user.userId });
+                      allOrders = res || [];
+                      visibleCount = 6;
+                    } catch (error) {
+                      ordersDiv.innerHTML = `
+                        <div class="loading-container">
+                          <div class="loading-text" style="color: #ef4444;">Failed to load orders. Please try again.</div>
+                        </div>
+                      `;
+                      return;
+                    }
                   }
 
-                  const ordersDiv = document.getElementById("orders");
                   ordersDiv.innerHTML = "";
 
                   if (!allOrders.length) {
