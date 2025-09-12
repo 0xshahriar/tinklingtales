@@ -71,6 +71,37 @@
                 border: 1px solid var(--line);
                 background: #fff;
                 cursor: pointer;
+                transition: all 0.2s ease;
+                position: relative;
+            }
+
+            .btn:hover:not(:disabled) {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+            }
+
+            .btn:disabled,
+            .btn.loading {
+                opacity: 0.7;
+                cursor: not-allowed;
+                pointer-events: none;
+            }
+
+            .btn.loading::after {
+                content: "";
+                position: absolute;
+                width: 14px;
+                height: 14px;
+                border: 2px solid transparent;
+                border-top: 2px solid currentColor;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin-left: 6px;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
             }
             .btn.primary {
                 background: var(--brand);
@@ -185,6 +216,82 @@
                 border-radius: 12px;
                 max-width: 500px;
                 width: 90%;
+            }
+
+            /* Star Rating Styles */
+            .star-rating {
+                display: flex;
+                gap: 4px;
+                font-size: 24px;
+                cursor: pointer;
+            }
+
+            .star {
+                color: #ddd;
+                transition: color 0.2s ease;
+                cursor: pointer;
+                user-select: none;
+            }
+
+            .star:hover,
+            .star.active {
+                color: #fbbf24;
+            }
+
+            .star.filled {
+                color: #fbbf24;
+            }
+
+            .review-stars {
+                display: flex;
+                gap: 2px;
+                font-size: 16px;
+                margin-bottom: 8px;
+            }
+
+            .existing-review {
+                margin-top: 12px;
+                padding: 12px;
+                background: #f9fafb;
+                border-radius: 8px;
+                border-left: 4px solid #fbbf24;
+            }
+
+            .review-text {
+                margin: 0;
+                font-style: italic;
+                color: #374151;
+            }
+
+            /* Loading Animation */
+            .loading-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 40px 20px;
+                text-align: center;
+            }
+
+            .loading-spinner {
+                width: 40px;
+                height: 40px;
+                border: 4px solid #f3f4f6;
+                border-top: 4px solid #1f2937;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin-bottom: 16px;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            .loading-text {
+                color: #6b7280;
+                font-size: 16px;
+                font-weight: 500;
             }
             .edit-icon {
                 cursor: pointer;
@@ -446,13 +553,65 @@
             </div>
         </div>
 
+        <!-- Review Modal -->
+        <div class="modal" id="reviewModal">
+            <div class="modal-box">
+                <h3>Leave a Review</h3>
+                <div id="reviewOrderDetails" style="margin-bottom: 16px;"></div>
+                
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Rating:</label>
+                    <div class="star-rating" id="starRating">
+                        <span class="star" data-rating="1">☆</span>
+                        <span class="star" data-rating="2">☆</span>
+                        <span class="star" data-rating="3">☆</span>
+                        <span class="star" data-rating="4">☆</span>
+                        <span class="star" data-rating="5">☆</span>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Review:</label>
+                    <textarea 
+                        id="reviewText" 
+                        placeholder="Share your experience with this product..."
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; resize: vertical; min-height: 80px;">
+                    </textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button class="btn" id="closeReview">Cancel</button>
+                    <button class="btn primary" id="submitReview">Submit Review</button>
+                </div>
+            </div>
+        </div>
+
         <script>
                 document.getElementById("year").textContent = new Date().getFullYear();
 
-                const API_URL = "https://script.google.com/macros/s/AKfycbyMQRrvsac_lBvYOlt5gtaO4CKHTea7_UjeUC2VluTrPCKaYOERrpXV5jhkgoJPnYzdPA/exec";
+                const API_URL = "https://script.google.com/macros/s/AKfycbx9-oA0QQK70VgfeYvzgOd2kGLRblHd1sf1JZs70Dq4lZkWTRIsT4epviZnwoodNC3ckg/exec";
                 async function apiRequest(payload) {
                   const res = await fetch(API_URL, { method:"POST", body: JSON.stringify(payload) });
                   return res.json();
+                }
+
+                // ===== LOADING STATE HELPER =====
+                function setButtonLoading(button, isLoading, originalText = null) {
+                    if (isLoading) {
+                        button.disabled = true;
+                        button.classList.add('loading');
+                        if (originalText) {
+                            button.dataset.originalText = button.textContent;
+                            button.textContent = originalText;
+                        }
+                    } else {
+                        button.disabled = false;
+                        button.classList.remove('loading');
+                        if (button.dataset.originalText) {
+                            button.textContent = button.dataset.originalText;
+                            delete button.dataset.originalText;
+                        }
+                    }
                 }
 
                 let user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -488,12 +647,21 @@
                   const newPhone = prompt("Enter new phone:", user.phone || "");
                   const newAddr = prompt("Enter new address:", user.address || "");
                   if (newPhone || newAddr) {
-                    await apiRequest({ action:"updateUser", userId:user.userId, phone:newPhone, address:newAddr });
-                    user.phone = newPhone;
-                    user.address = newAddr;
-                    localStorage.setItem("user", JSON.stringify(user));
-                    document.getElementById("phone").textContent = newPhone;
-                    document.getElementById("address").textContent = newAddr;
+                    const editBtn = document.getElementById("editContact");
+                    setButtonLoading(editBtn, true, "Updating...");
+                    
+                    try {
+                      await apiRequest({ action:"updateUser", userId:user.userId, phone:newPhone, address:newAddr });
+                      user.phone = newPhone;
+                      user.address = newAddr;
+                      localStorage.setItem("user", JSON.stringify(user));
+                      document.getElementById("phone").textContent = newPhone;
+                      document.getElementById("address").textContent = newAddr;
+                    } catch (error) {
+                      alert("Failed to update contact information. Please try again.");
+                    } finally {
+                      setButtonLoading(editBtn, false);
+                    }
                   }
                 });
 
@@ -507,13 +675,22 @@
                     return;
                   }
 
-                  const res = await apiRequest({ action:"deleteAccount", userId:user.userId });
-                  if (res.success) {
-                    alert("Your account and all orders have been deleted.");
-                    localStorage.removeItem("user");
-                    window.location.href = "login.html";
-                  } else {
-                    alert(res.error || "Failed to delete account.");
+                  const deleteBtn = document.getElementById("deleteAccountBtn");
+                  setButtonLoading(deleteBtn, true, "Deleting...");
+
+                  try {
+                    const res = await apiRequest({ action:"deleteAccount", userId:user.userId });
+                    if (res.success) {
+                      alert("Your account and all orders have been deleted.");
+                      localStorage.removeItem("user");
+                      window.location.href = "login.html";
+                    } else {
+                      alert(res.error || "Failed to delete account.");
+                    }
+                  } catch (error) {
+                    alert("Network error. Please check your connection and try again.");
+                  } finally {
+                    setButtonLoading(deleteBtn, false);
                   }
                 });
 
@@ -546,13 +723,31 @@
                 let visibleCount = 6;
 
                 async function loadOrders(initial = true) {
+                  const ordersDiv = document.getElementById("orders");
+                  
                   if (initial) {
-                    const res = await apiRequest({ action:"getOrders", userId:user.userId });
-                    allOrders = res || [];
-                    visibleCount = 6;
+                    // Show loading animation
+                    ordersDiv.innerHTML = `
+                      <div class="loading-container">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-text">Loading your purchase history...</div>
+                      </div>
+                    `;
+                    
+                    try {
+                      const res = await apiRequest({ action:"getOrders", userId:user.userId });
+                      allOrders = res || [];
+                      visibleCount = 6;
+                    } catch (error) {
+                      ordersDiv.innerHTML = `
+                        <div class="loading-container">
+                          <div class="loading-text" style="color: #ef4444;">Failed to load orders. Please try again.</div>
+                        </div>
+                      `;
+                      return;
+                    }
                   }
 
-                  const ordersDiv = document.getElementById("orders");
                   ordersDiv.innerHTML = "";
 
                   if (!allOrders.length) {
@@ -575,6 +770,7 @@
                     const viewBtn = document.createElement("button");
                     viewBtn.className = "btn";
                     viewBtn.textContent = "View Details";
+                    viewBtn.style.marginRight = "12px";
                     viewBtn.addEventListener("click", () => viewOrder(o));
                     div.appendChild(viewBtn);
 
@@ -582,30 +778,76 @@
                       const cancelBtn = document.createElement("button");
                       cancelBtn.className = "btn";
                       cancelBtn.textContent = "Cancel";
-                      cancelBtn.addEventListener("click", () => cancelOrder(o.orderId));
+                      cancelBtn.addEventListener("click", () => cancelOrder(o.orderId, cancelBtn));
                       div.appendChild(cancelBtn);
+                    } else if (o.status === "complete") {
+                      // Check if review already exists
+                      if (!o.review) {
+                        const reviewBtn = document.createElement("button");
+                        reviewBtn.className = "btn primary";
+                        reviewBtn.textContent = "Leave Review";
+                        reviewBtn.addEventListener("click", () => openReviewModal(o));
+                        div.appendChild(reviewBtn);
+                      } else {
+                        // Show existing review
+                        const reviewDiv = document.createElement("div");
+                        reviewDiv.className = "existing-review";
+                        reviewDiv.innerHTML = `
+                          <div class="review-stars">${generateStars(o.review.rating, true)}</div>
+                          <p class="review-text">"${o.review.text}"</p>
+                        `;
+                        div.appendChild(reviewDiv);
+                      }
                     }
 
                     ordersDiv.appendChild(div);
                   });
 
-                  if (visibleCount < allOrders.length) {
-                    const showMoreBtn = document.createElement("button");
-                    showMoreBtn.className = "btn";
-                    showMoreBtn.textContent = "Show More";
-                    showMoreBtn.style.marginTop = "10px";
-                    showMoreBtn.addEventListener("click", () => {
-                      visibleCount += 6;
-                      loadOrders(false);
-                    });
-                    ordersDiv.appendChild(showMoreBtn);
+                  // Add show more/less buttons
+                  if (allOrders.length > 6) {
+                    const buttonDiv = document.createElement("div");
+                    buttonDiv.style.textAlign = "center";
+                    buttonDiv.style.marginTop = "10px";
+                    
+                    if (visibleCount < allOrders.length) {
+                      const showMoreBtn = document.createElement("button");
+                      showMoreBtn.className = "btn";
+                      showMoreBtn.textContent = "Show More";
+                      showMoreBtn.addEventListener("click", () => {
+                        visibleCount += 6;
+                        loadOrders(false);
+                      });
+                      buttonDiv.appendChild(showMoreBtn);
+                    }
+                    
+                    if (visibleCount > 6) {
+                      const showLessBtn = document.createElement("button");
+                      showLessBtn.className = "btn";
+                      showLessBtn.textContent = "Show Less";
+                      showLessBtn.style.marginLeft = "10px";
+                      showLessBtn.addEventListener("click", () => {
+                        visibleCount = 6;
+                        loadOrders(false);
+                      });
+                      buttonDiv.appendChild(showLessBtn);
+                    }
+                    
+                    ordersDiv.appendChild(buttonDiv);
                   }
                 }
 
-                async function cancelOrder(orderId) {
+                async function cancelOrder(orderId, cancelBtn) {
                   if (!confirm("Cancel this order?")) return;
-                  await apiRequest({ action:"updateOrder", orderId: orderId.toString(), status:"cancelled" });
-                  loadOrders(true);
+                  
+                  setButtonLoading(cancelBtn, true, "Cancelling...");
+                  
+                  try {
+                    await apiRequest({ action:"updateOrder", orderId: orderId.toString(), status:"cancelled" });
+                    loadOrders(true);
+                  } catch (error) {
+                    alert("Failed to cancel order. Please try again.");
+                    setButtonLoading(cancelBtn, false);
+                  }
                 }
 
                 function viewOrder(order) {
@@ -637,6 +879,137 @@
                 document.getElementById("closeOrder").addEventListener("click", () => {
                   document.getElementById("orderModal").style.display = "none";
                 });
+
+                // ===== REVIEW SYSTEM =====
+                let currentReviewOrder = null;
+                let selectedRating = 0;
+
+                function generateStars(rating, readonly = false) {
+                  let stars = "";
+                  for (let i = 1; i <= 5; i++) {
+                    if (i <= rating) {
+                      stars += "★"; // Filled star
+                    } else {
+                      stars += "☆"; // Empty star
+                    }
+                  }
+                  return `<span style="color: #fbbf24;">${stars}</span>`;
+                }
+
+                function openReviewModal(order) {
+                  currentReviewOrder = order;
+                  selectedRating = 0;
+                  
+                  // Reset form
+                  document.getElementById("reviewText").value = "";
+                  resetStarRating();
+                  
+                  // Show order details
+                  document.getElementById("reviewOrderDetails").innerHTML = `
+                    <div style="padding: 12px; background: #f3f4f6; border-radius: 8px;">
+                      <p><strong>Order #${order.orderId}</strong></p>
+                      <p>${order.details}</p>
+                    </div>
+                  `;
+                  
+                  document.getElementById("reviewModal").style.display = "flex";
+                }
+
+                function resetStarRating() {
+                  const stars = document.querySelectorAll("#starRating .star");
+                  stars.forEach(star => {
+                    star.classList.remove("filled", "active");
+                    star.textContent = "☆";
+                  });
+                }
+
+                function updateStarRating(rating) {
+                  const stars = document.querySelectorAll("#starRating .star");
+                  stars.forEach((star, index) => {
+                    if (index < rating) {
+                      star.classList.add("filled");
+                      star.textContent = "★";
+                    } else {
+                      star.classList.remove("filled");
+                      star.textContent = "☆";
+                    }
+                  });
+                }
+
+                // Star rating event listeners
+                document.querySelectorAll("#starRating .star").forEach(star => {
+                  star.addEventListener("click", () => {
+                    selectedRating = parseInt(star.dataset.rating);
+                    updateStarRating(selectedRating);
+                  });
+                  
+                  star.addEventListener("mouseover", () => {
+                    const rating = parseInt(star.dataset.rating);
+                    updateStarRating(rating);
+                  });
+                });
+
+                document.getElementById("starRating").addEventListener("mouseleave", () => {
+                  updateStarRating(selectedRating);
+                });
+
+                // Review modal event listeners
+                document.getElementById("closeReview").addEventListener("click", () => {
+                  document.getElementById("reviewModal").style.display = "none";
+                });
+
+                document.getElementById("submitReview").addEventListener("click", async () => {
+                  if (selectedRating === 0) {
+                    alert("Please select a rating!");
+                    return;
+                  }
+                  
+                  const reviewText = document.getElementById("reviewText").value.trim();
+                  if (!reviewText) {
+                    alert("Please write a review!");
+                    return;
+                  }
+                  
+                  const submitBtn = document.getElementById("submitReview");
+                  setButtonLoading(submitBtn, true, "Submitting...");
+                  
+                  try {
+                    const reviewData = {
+                      action: "addReview",
+                      orderId: currentReviewOrder.orderId,
+                      userId: user.userId,
+                      rating: selectedRating,
+                      text: reviewText,
+                      dateTime: new Date().toISOString()
+                    };
+                    
+                    const res = await apiRequest(reviewData);
+                    if (res.success) {
+                      // Update the order locally to include the review
+                      const orderIndex = allOrders.findIndex(o => o.orderId === currentReviewOrder.orderId);
+                      if (orderIndex !== -1) {
+                        allOrders[orderIndex].review = {
+                          rating: selectedRating,
+                          text: reviewText
+                        };
+                      }
+                      
+                      alert("Thank you for your review!");
+                      document.getElementById("reviewModal").style.display = "none";
+                      loadOrders(false); // Refresh the orders display
+                    } else {
+                      alert(res.error || "Failed to submit review. Please try again.");
+                    }
+                  } catch (error) {
+                    alert("Network error. Please check your connection and try again.");
+                  } finally {
+                    setButtonLoading(submitBtn, false);
+                  }
+                });
+
+                // Expose review functions to global scope for inline event handlers
+                window.openReviewModal = openReviewModal;
+                window.generateStars = generateStars;
 
                 // Verify email
                 document.getElementById("closeVerify").addEventListener("click", () => {

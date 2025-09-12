@@ -74,6 +74,37 @@
                 background: #fff;
                 cursor: pointer;
                 text-decoration: none;
+                transition: all 0.2s ease;
+                position: relative;
+            }
+
+            .btn:hover:not(:disabled) {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+            }
+
+            .btn:disabled,
+            .btn.loading {
+                opacity: 0.7;
+                cursor: not-allowed;
+                pointer-events: none;
+            }
+
+            .btn.loading::after {
+                content: "";
+                position: absolute;
+                width: 16px;
+                height: 16px;
+                border: 2px solid transparent;
+                border-top: 2px solid currentColor;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin-left: 8px;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
             }
             .btn.primary {
                 background: var(--brand);
@@ -388,11 +419,30 @@
             }
 
             // API
-            const API_URL = "https://script.google.com/macros/s/AKfycbyMQRrvsac_lBvYOlt5gtaO4CKHTea7_UjeUC2VluTrPCKaYOERrpXV5jhkgoJPnYzdPA/exec";
+            const API_URL = "https://script.google.com/macros/s/AKfycbyj1uU_z9XZ5nYP0n7JXCo5ZZHKlcgAjtkom6jRDzkAMGk8HCRT3D3PSkc8vjr5PGNzng/exec";
             async function apiRequest(payload) {
               console.log("Sending payload:", payload); // 🔎 Debug log
               const res = await fetch(API_URL, { method:"POST", body: JSON.stringify(payload) });
               return res.json();
+            }
+
+            // ===== LOADING STATE HELPER =====
+            function setButtonLoading(button, isLoading, originalText = null) {
+                if (isLoading) {
+                    button.disabled = true;
+                    button.classList.add('loading');
+                    if (originalText) {
+                        button.dataset.originalText = button.textContent;
+                        button.textContent = originalText;
+                    }
+                } else {
+                    button.disabled = false;
+                    button.classList.remove('loading');
+                    if (button.dataset.originalText) {
+                        button.textContent = button.dataset.originalText;
+                        delete button.dataset.originalText;
+                    }
+                }
             }
 
             // username check
@@ -420,43 +470,53 @@
               const username = usernameInput.value.trim();
               const passwordHash = await sha256(pw.value);
 
-              if (mode === "login") {
-                const res = await apiRequest({ action:"login", username, passwordHash });
-                console.log("Login response:", res); // 🔎 Debug log
-                if (res.success) {
-                  localStorage.setItem("user", JSON.stringify(res));
-                  window.location.href = "user.html";
-                } else alert(res.error || "Login failed");
-              } else {
-                if (usernameTaken) {
-                  alert("This username is already taken. Please choose another.");
-                  return;
+              // Set loading state
+              setButtonLoading(submitBtn, true, mode === "login" ? "Logging in..." : "Creating account...");
+
+              try {
+                if (mode === "login") {
+                  const res = await apiRequest({ action:"login", username, passwordHash });
+                  console.log("Login response:", res); // 🔎 Debug log
+                  if (res.success) {
+                    localStorage.setItem("user", JSON.stringify(res));
+                    window.location.href = "user.html";
+                  } else alert(res.error || "Login failed");
+                } else {
+                  if (usernameTaken) {
+                    alert("This username is already taken. Please choose another.");
+                    return;
+                  }
+                  const data = {
+                    action:"register",
+                    username,
+                    passwordHash,
+                    fullName: document.getElementById("fullname").value.trim(),
+                    email: document.getElementById("email").value.trim(),
+                    phone: document.getElementById("phone").value.trim(),
+                    address: document.getElementById("address").value.trim(),
+                    securityQuestion: document.getElementById("securityQ").value,
+                    securityAnswer: document.getElementById("securityA").value.trim()
+                  };
+                  if (!/^(\+8801[0-9]{9}|01[0-9]{9})$/.test(data.phone)) {
+                    alert("This service is only available in Bangladesh. Please provide a valid Bangladeshi number.");
+                    return;
+                  }
+                  if (!/(gmail\.com|hotmail\.com)$/.test(data.email)) {
+                    alert("Only Gmail or Hotmail addresses are allowed.");
+                    return;
+                  }
+                  const res = await apiRequest(data);
+                  console.log("Register response:", res); // 🔎 Debug log
+                  if (res.success) {
+                    alert("Account created! Please check your email for the verification code.");
+                    window.location.href = "user.html";
+                  } else alert(res.error || "Signup failed");
                 }
-                const data = {
-                  action:"register",
-                  username,
-                  passwordHash,
-                  fullName: document.getElementById("fullname").value.trim(),
-                  email: document.getElementById("email").value.trim(),
-                  phone: document.getElementById("phone").value.trim(),
-                  address: document.getElementById("address").value.trim(),
-                  securityQuestion: document.getElementById("securityQ").value,
-                  securityAnswer: document.getElementById("securityA").value.trim()
-                };
-                if (!/^(\+8801[0-9]{9}|01[0-9]{9})$/.test(data.phone)) {
-                  alert("This service is only available in Bangladesh. Please provide a valid Bangladeshi number.");
-                  return;
-                }
-                if (!/(gmail\.com|hotmail\.com)$/.test(data.email)) {
-                  alert("Only Gmail or Hotmail addresses are allowed.");
-                  return;
-                }
-                const res = await apiRequest(data);
-                console.log("Register response:", res); // 🔎 Debug log
-                if (res.success) {
-                  alert("Account created! Please check your email for the verification code.");
-                  window.location.href = "user.html";
-                } else alert(res.error || "Signup failed");
+              } catch (error) {
+                alert("Network error. Please check your connection and try again.");
+              } finally {
+                // Remove loading state
+                setButtonLoading(submitBtn, false);
               }
             });
             const currentUser = JSON.parse(localStorage.getItem("user") || "{}");

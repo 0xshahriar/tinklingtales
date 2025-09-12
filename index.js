@@ -2,8 +2,7 @@
     const SHOP_NAME = "Tinkling Tales";
     const FACEBOOK_PAGE_URL = "https://www.facebook.com/tinklingtales";
     const CURRENCY = "৳";
-    const API_URL =
-        "https://script.google.com/macros/s/AKfycbyMQRrvsac_lBvYOlt5gtaO4CKHTea7_UjeUC2VluTrPCKaYOERrpXV5jhkgoJPnYzdPA/exec"; // ✅ replace with your Apps Script URL
+    const API_URL = "https://script.google.com/macros/s/AKfycbx9-oA0QQK70VgfeYvzgOd2kGLRblHd1sf1JZs70Dq4lZkWTRIsT4epviZnwoodNC3ckg/exec"; // ✅ replace with your Apps Script URL
 
     // --- Products ---
     const PRODUCTS = [];
@@ -43,7 +42,8 @@
         cart: [],
     };
 
-    let visibleCount = 6;
+    // Load visible count from localStorage or default to 6
+    let visibleCount = parseInt(localStorage.getItem('visibleCount')) || 6;
 
     const els = {
         shopName: document.getElementById("shopName"),
@@ -144,14 +144,30 @@
         els.empty.style.display = "none";
 
         const toShow = results.slice(0, visibleCount);
+        
 
         toShow.forEach((p) => {
             const card = document.createElement("article");
             card.className = "card";
             card.innerHTML = `
-                <div class="img"><img alt="${p.name}" src="${
-                p.image
-            }" loading="lazy"/></div>
+                <div class="img">
+                    <div class="image-slider" data-product-id="${p.id}">
+                        <div class="slider-container">
+                            ${(p.images || [p.image]).map((img, index) => 
+                                `<img alt="${p.name}" src="${img}" loading="lazy" class="slide ${index === 0 ? 'active' : ''}" data-index="${index}"/>`
+                            ).join('')}
+                        </div>
+                        ${(p.images && p.images.length > 1) ? `
+                            <button class="slider-btn prev" data-direction="prev">‹</button>
+                            <button class="slider-btn next" data-direction="next">›</button>
+                            <div class="slider-dots">
+                                ${(p.images).map((_, index) => 
+                                    `<span class="dot ${index === 0 ? 'active' : ''}" data-index="${index}"></span>`
+                                ).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
                 <div class="body">
                   <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
                     <h3 style="margin:0;font-weight:600">${p.name}</h3>
@@ -189,15 +205,158 @@
                     showToast(`${p.name} added to cart`);
                 }
             );
+
+            // Setup image slider if multiple images exist
+            if (p.images && p.images.length > 1) {
+                setupImageSlider(card, p.images);
+            }
+
             els.cards.appendChild(card);
         });
 
         const showMoreBtn = document.getElementById("showMoreBtn");
+        const showLessBtn = document.getElementById("showLessBtn");
+        
         if (results.length > visibleCount) {
             showMoreBtn.style.display = "inline-block";
+            showMoreBtn.textContent = "Load More";
         } else {
             showMoreBtn.style.display = "none";
         }
+        
+        // Show "Load Less" button if we're showing more than initial count
+        if (showLessBtn) {
+            if (visibleCount > 6) {
+                showLessBtn.style.display = "inline-block";
+            } else {
+                showLessBtn.style.display = "none";
+            }
+        }
+        
+        // Update scroll-to-top threshold after products are rendered
+        if (window.updateScrollThreshold) {
+            setTimeout(() => window.updateScrollThreshold(), 50);
+        }
+    }
+
+    // ===== IMAGE SLIDER =====
+    function setupImageSlider(card, images) {
+        const slider = card.querySelector('.image-slider');
+        const slides = slider.querySelectorAll('.slide');
+        const prevBtn = slider.querySelector('.prev');
+        const nextBtn = slider.querySelector('.next');
+        const dots = slider.querySelectorAll('.dot');
+        let currentIndex = 0;
+
+        function showSlide(index) {
+            // Remove active class from all slides and dots
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            // Add active class to current slide and dot
+            slides[index].classList.add('active');
+            dots[index].classList.add('active');
+            currentIndex = index;
+        }
+
+        function nextSlide() {
+            const newIndex = (currentIndex + 1) % images.length; // Loop to first
+            showSlide(newIndex);
+        }
+
+        function prevSlide() {
+            const newIndex = (currentIndex - 1 + images.length) % images.length; // Loop to last
+            showSlide(newIndex);
+        }
+
+        // Event listeners for navigation buttons
+        if (prevBtn) prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            prevSlide();
+        });
+
+        if (nextBtn) nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            nextSlide();
+        });
+
+        // Event listeners for dots
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showSlide(index);
+            });
+        });
+
+        // Touch/swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        slider.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        slider.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            const swipeThreshold = 50;
+            
+            if (touchStartX - touchEndX > swipeThreshold) {
+                nextSlide(); // Swipe left, show next
+            } else if (touchEndX - touchStartX > swipeThreshold) {
+                prevSlide(); // Swipe right, show previous
+            }
+        });
+    }
+
+    // ===== SCROLL TO TOP =====
+    function setupScrollToTop() {
+        const scrollBtn = document.getElementById('scrollToTop');
+        let isVisible = false;
+        let thresholdPosition = 0;
+
+        function updateThreshold() {
+            const cards = document.querySelectorAll('#cards .card');
+            if (cards.length >= 3) {
+                thresholdPosition = cards[2].offsetTop;
+            } else if (cards.length > 0) {
+                // If less than 3 products, use the last product position
+                thresholdPosition = cards[cards.length - 1].offsetTop;
+            } else {
+                thresholdPosition = window.innerHeight * 2; // Fallback
+            }
+        }
+
+        function toggleScrollButton() {
+            const scrollY = window.scrollY;
+            const shouldShow = scrollY > thresholdPosition;
+            
+            if (shouldShow && !isVisible) {
+                scrollBtn.classList.add('visible');
+                isVisible = true;
+            } else if (!shouldShow && isVisible) {
+                scrollBtn.classList.remove('visible');
+                isVisible = false;
+            }
+        }
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+            // Hide button after clicking
+            scrollBtn.classList.remove('visible');
+            isVisible = false;
+        }
+
+        // Update threshold when products are rendered
+        window.addEventListener('scroll', toggleScrollButton);
+        scrollBtn.addEventListener('click', scrollToTop);
+        
+        // Update threshold after products load
+        setTimeout(updateThreshold, 100);
+        
+        return { updateThreshold };
     }
 
     // ===== CART =====
@@ -256,6 +415,73 @@
     }
     els.dhakaRadio?.addEventListener("change", updateDeliveryOption);
     els.outsideRadio?.addEventListener("change", updateDeliveryOption);
+    
+    // Auto-select delivery option based on address and control radio buttons
+    function handleDeliveryAddressChange() {
+        const address = els.deliveryAddress?.value.trim() || "";
+        
+        if (address) {
+            // Check if address contains "Dhaka" (case insensitive)
+            const containsDhaka = address.toLowerCase().includes("dhaka");
+            
+            if (containsDhaka) {
+                // Enable Dhaka radio and auto-select it
+                if (els.dhakaRadio) {
+                    els.dhakaRadio.disabled = false;
+                    els.dhakaRadio.checked = true;
+                    updateDeliveryOption();
+                    // Remove visual disabled styling
+                    const dhakaLabel = document.getElementById("dhakaLabel");
+                    if (dhakaLabel) dhakaLabel.style.opacity = "1";
+                }
+                // Enable outside Dhaka radio
+                if (els.outsideRadio) {
+                    els.outsideRadio.disabled = false;
+                }
+            } else {
+                // Disable Dhaka radio and auto-select outside Dhaka
+                if (els.dhakaRadio) {
+                    els.dhakaRadio.disabled = true;
+                    els.dhakaRadio.checked = false;
+                    // Add visual disabled styling
+                    const dhakaLabel = document.getElementById("dhakaLabel");
+                    if (dhakaLabel) dhakaLabel.style.opacity = "0.5";
+                }
+                // Enable and select outside Dhaka radio
+                if (els.outsideRadio) {
+                    els.outsideRadio.disabled = false;
+                    els.outsideRadio.checked = true;
+                    updateDeliveryOption();
+                }
+            }
+        } else {
+            // Re-enable both options when address is empty
+            if (els.dhakaRadio) {
+                els.dhakaRadio.disabled = false;
+                // Remove visual disabled styling
+                const dhakaLabel = document.getElementById("dhakaLabel");
+                if (dhakaLabel) dhakaLabel.style.opacity = "1";
+            }
+            if (els.outsideRadio) {
+                els.outsideRadio.disabled = false;
+            }
+        }
+        
+        // Also add click event prevention for disabled radio
+        if (els.dhakaRadio) {
+            els.dhakaRadio.onclick = function(e) {
+                if (this.disabled) {
+                    e.preventDefault();
+                    return false;
+                }
+            };
+        }
+    }
+    
+    els.deliveryAddress?.addEventListener("input", handleDeliveryAddressChange);
+    
+    // Apply initial state based on any pre-filled address
+    handleDeliveryAddressChange();
     function grandTotal() {
         return subtotal() + deliveryCost;
     }
@@ -352,30 +578,48 @@
     els.q.addEventListener("input", () => {
         state.query = els.q.value;
         visibleCount = 6;
+        localStorage.setItem('visibleCount', visibleCount.toString());
         renderProducts();
     });
     els.color.addEventListener("change", () => {
         state.color = els.color.value;
         visibleCount = 6;
+        localStorage.setItem('visibleCount', visibleCount.toString());
         renderProducts();
     });
     els.size.addEventListener("change", () => {
         state.size = els.size.value;
         visibleCount = 6;
+        localStorage.setItem('visibleCount', visibleCount.toString());
         renderProducts();
     });
     els.maxPrice.addEventListener("input", () => {
         const v = els.maxPrice.value;
         state.maxPrice = v ? Number(v) : null;
         visibleCount = 6;
+        localStorage.setItem('visibleCount', visibleCount.toString());
         renderProducts();
     });
 
-    // ===== SHOW MORE HANDLER =====
-    document.getElementById("showMoreBtn").addEventListener("click", () => {
-        visibleCount += 6;
-        renderProducts();
-    });
+    // ===== SHOW MORE/LESS HANDLERS =====
+    const showMoreBtn = document.getElementById("showMoreBtn");
+    const showLessBtn = document.getElementById("showLessBtn");
+    
+    if (showMoreBtn) {
+        showMoreBtn.addEventListener("click", () => {
+            visibleCount += 6;
+            localStorage.setItem('visibleCount', visibleCount.toString());
+            renderProducts();
+        });
+    }
+    
+    if (showLessBtn) {
+        showLessBtn.addEventListener("click", () => {
+            visibleCount = 6;
+            localStorage.setItem('visibleCount', visibleCount.toString());
+            renderProducts();
+        });
+    }
 
     // ===== API HELPER =====
     async function apiRequest(payload) {
@@ -384,6 +628,25 @@
             body: JSON.stringify(payload),
         });
         return res.json();
+    }
+
+    // ===== LOADING STATE HELPER =====
+    function setButtonLoading(button, isLoading, originalText = null) {
+        if (isLoading) {
+            button.disabled = true;
+            button.classList.add('loading');
+            if (originalText) {
+                button.dataset.originalText = button.textContent;
+                button.textContent = originalText;
+            }
+        } else {
+            button.disabled = false;
+            button.classList.remove('loading');
+            if (button.dataset.originalText) {
+                button.textContent = button.dataset.originalText;
+                delete button.dataset.originalText;
+            }
+        }
     }
 
     // ===== CHECKOUT =====
@@ -408,23 +671,33 @@
         );
         const total = subtotal + deliveryCost;
 
-        const res = await apiRequest({
-            action: "addOrder",
-            userId: user.userId,
-            details: state.cart
-                .map((c) => `${c.name} (size ${c.size}) x${c.qty}`)
-                .join(", "),
-            total,
-            address,
-        });
+        // Set loading state
+        setButtonLoading(els.checkoutBtn, true, "Processing...");
 
-        if (res.success) {
-            alert("Order placed successfully!");
-            state.cart = [];
-            localStorage.removeItem(CART_KEY);
-            window.location.href = "user.html";
-        } else {
-            alert(res.error || "Checkout failed.");
+        try {
+            const res = await apiRequest({
+                action: "addOrder",
+                userId: user.userId,
+                details: state.cart
+                    .map((c) => `${c.name} (size ${c.size}) x${c.qty}`)
+                    .join(", "),
+                total,
+                address,
+            });
+
+            if (res.success) {
+                alert("Order placed successfully!");
+                state.cart = [];
+                localStorage.removeItem(CART_KEY);
+                window.location.href = "user.html";
+            } else {
+                alert(res.error || "Checkout failed.");
+            }
+        } catch (error) {
+            alert("Network error. Please check your connection and try again.");
+        } finally {
+            // Remove loading state
+            setButtonLoading(els.checkoutBtn, false);
         }
     });
 
@@ -432,6 +705,10 @@
     loadCart();
     renderProducts();
     renderCart();
+    const scrollToTop = setupScrollToTop();
+    
+    // Store reference for updating threshold after product renders
+    window.updateScrollThreshold = scrollToTop.updateThreshold;
 
     // ===== JSON-LD =====
     const orgLd = {

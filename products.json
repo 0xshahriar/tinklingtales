@@ -7,7 +7,8 @@
     "sizes": ["2.2", "2.4", "2.6", "2.8", "3.0"],
     "finish": "Glossy",
     "image": "/images/ranga_roop.jpg",
-    "tags": ["Bridal", "Premium"]
+    "tags": ["Bridal", "Premium"],
+    "weeklySales": 23
   },
   {
     "id": "P002",
@@ -17,7 +18,9 @@
     "sizes": ["2.2", "2.4", "2.6", "2.8", "3.0"],
     "finish": "Matte",
     "image": "/images/monihar_melody.jpg",
-    "tags": ["Daily Wear", "Lightweight"]
+    "images": ["/images/monihar_melody.jpg"],
+    "tags": ["Daily Wear", "Lightweight"],
+    "weeklySales": 31
   },
   {
     "id": "P003",
@@ -27,7 +30,9 @@
     "sizes": ["2.2", "2.4", "2.6", "2.8", "3.0"],
     "finish": "Matte",
     "image": "/images/shonali_shaj.jpg",
-    "tags": ["Festive", "Handcrafted"]
+    "images": ["/images/shonali_shaj.jpg"],
+    "tags": ["Festive", "Handcrafted"],
+    "weeklySales": 18
   },
   {
     "id": "P004",
