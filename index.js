@@ -43,7 +43,8 @@
         cart: [],
     };
 
-    let visibleCount = 6;
+    // Load visible count from localStorage or default to 6
+    let visibleCount = parseInt(localStorage.getItem('visibleCount')) || 6;
 
     const els = {
         shopName: document.getElementById("shopName"),
@@ -59,7 +60,6 @@
         maxPrice: document.getElementById("maxPrice"),
         cards: document.getElementById("cards"),
         empty: document.getElementById("empty"),
-        topSellerCards: document.getElementById("topSellerCards"),
         cartBtn: document.getElementById("cartBtn"),
         drawer: document.getElementById("drawer"),
         backdrop: document.getElementById("backdrop"),
@@ -145,6 +145,9 @@
         els.empty.style.display = "none";
 
         const toShow = results.slice(0, visibleCount);
+        
+        // Get top selling product for badge
+        const topSellingProduct = getTopSellingProduct();
 
         toShow.forEach((p) => {
             const card = document.createElement("article");
@@ -167,6 +170,7 @@
                             </div>
                         ` : ''}
                     </div>
+                    ${topSellingProduct && topSellingProduct.id === p.id ? '<div class="top-sale-badge">Top Sale</div>' : ''}
                 </div>
                 <div class="body">
                   <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
@@ -291,54 +295,11 @@
         });
     }
 
-    // ===== TOP SELLERS =====
-    function renderTopSellers() {
-        // Get products with sales data and sort by weekly sales (descending)
-        const topSellers = PRODUCTS
+    // ===== TOP SALE BADGE =====
+    function getTopSellingProduct() {
+        return PRODUCTS
             .filter(p => p.weeklySales && p.weeklySales > 0)
-            .sort((a, b) => b.weeklySales - a.weeklySales)
-            .slice(0, 3); // Top 3
-
-        els.topSellerCards.innerHTML = "";
-
-        if (topSellers.length === 0) {
-            els.topSellerCards.innerHTML = `<p style="text-align: center; color: #6b7280;">No sales data available yet.</p>`;
-            return;
-        }
-
-        topSellers.forEach((product, index) => {
-            const card = document.createElement("article");
-            card.className = "top-seller-card";
-            
-            // Use either images array or single image
-            const imageUrl = (product.images && product.images.length > 0) ? product.images[0] : product.image;
-            
-            card.innerHTML = `
-                <div class="img">
-                    <img alt="${product.name}" src="${imageUrl}" loading="lazy"/>
-                </div>
-                <div class="body">
-                    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
-                        <h3 style="margin:0;font-weight:600;font-size:16px">${product.name}</h3>
-                        <div class="price" style="font-size:14px">${CURRENCY}${product.price.toLocaleString("en-BD")}</div>
-                    </div>
-                    <div class="muted" style="font-size:13px">${product.finish} • ${product.colors.join(", ")}</div>
-                    <div class="tags" style="margin:4px 0">${product.tags.map((t) => `<span class="tag" style="font-size:11px">${t}</span>`).join("")}</div>
-                    <div class="sales-badge">${product.weeklySales} sold this week</div>
-                    <button class="btn primary" style="font-size:13px;padding:8px 12px" data-role="add-top-seller" data-product-id="${product.id}">Add to cart</button>
-                </div>
-            `;
-
-            // Add click handler for the add to cart button
-            const addBtn = card.querySelector('[data-role="add-top-seller"]');
-            addBtn.addEventListener("click", () => {
-                // Use the first available size as default
-                addToCart(product, product.sizes[0]);
-                showToast(`${product.name} added to cart`);
-            });
-
-            els.topSellerCards.appendChild(card);
-        });
+            .sort((a, b) => b.weeklySales - a.weeklySales)[0];
     }
 
     // ===== CART =====
@@ -512,28 +473,33 @@
     els.q.addEventListener("input", () => {
         state.query = els.q.value;
         visibleCount = 6;
+        localStorage.setItem('visibleCount', visibleCount.toString());
         renderProducts();
     });
     els.color.addEventListener("change", () => {
         state.color = els.color.value;
         visibleCount = 6;
+        localStorage.setItem('visibleCount', visibleCount.toString());
         renderProducts();
     });
     els.size.addEventListener("change", () => {
         state.size = els.size.value;
         visibleCount = 6;
+        localStorage.setItem('visibleCount', visibleCount.toString());
         renderProducts();
     });
     els.maxPrice.addEventListener("input", () => {
         const v = els.maxPrice.value;
         state.maxPrice = v ? Number(v) : null;
         visibleCount = 6;
+        localStorage.setItem('visibleCount', visibleCount.toString());
         renderProducts();
     });
 
     // ===== SHOW MORE HANDLER =====
     document.getElementById("showMoreBtn").addEventListener("click", () => {
         visibleCount += 6;
+        localStorage.setItem('visibleCount', visibleCount.toString());
         renderProducts();
     });
 
@@ -621,7 +587,6 @@
     loadCart();
     renderProducts();
     renderCart();
-    renderTopSellers();
 
     // ===== JSON-LD =====
     const orgLd = {
