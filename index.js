@@ -386,6 +386,25 @@
         return res.json();
     }
 
+    // ===== LOADING STATE HELPER =====
+    function setButtonLoading(button, isLoading, originalText = null) {
+        if (isLoading) {
+            button.disabled = true;
+            button.classList.add('loading');
+            if (originalText) {
+                button.dataset.originalText = button.textContent;
+                button.textContent = originalText;
+            }
+        } else {
+            button.disabled = false;
+            button.classList.remove('loading');
+            if (button.dataset.originalText) {
+                button.textContent = button.dataset.originalText;
+                delete button.dataset.originalText;
+            }
+        }
+    }
+
     // ===== CHECKOUT =====
     els.checkoutBtn?.addEventListener("click", async () => {
         const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -408,23 +427,33 @@
         );
         const total = subtotal + deliveryCost;
 
-        const res = await apiRequest({
-            action: "addOrder",
-            userId: user.userId,
-            details: state.cart
-                .map((c) => `${c.name} (size ${c.size}) x${c.qty}`)
-                .join(", "),
-            total,
-            address,
-        });
+        // Set loading state
+        setButtonLoading(els.checkoutBtn, true, "Processing...");
 
-        if (res.success) {
-            alert("Order placed successfully!");
-            state.cart = [];
-            localStorage.removeItem(CART_KEY);
-            window.location.href = "user.html";
-        } else {
-            alert(res.error || "Checkout failed.");
+        try {
+            const res = await apiRequest({
+                action: "addOrder",
+                userId: user.userId,
+                details: state.cart
+                    .map((c) => `${c.name} (size ${c.size}) x${c.qty}`)
+                    .join(", "),
+                total,
+                address,
+            });
+
+            if (res.success) {
+                alert("Order placed successfully!");
+                state.cart = [];
+                localStorage.removeItem(CART_KEY);
+                window.location.href = "user.html";
+            } else {
+                alert(res.error || "Checkout failed.");
+            }
+        } catch (error) {
+            alert("Network error. Please check your connection and try again.");
+        } finally {
+            // Remove loading state
+            setButtonLoading(els.checkoutBtn, false);
         }
     });
 
