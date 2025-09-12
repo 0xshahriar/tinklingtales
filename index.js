@@ -216,10 +216,22 @@
         });
 
         const showMoreBtn = document.getElementById("showMoreBtn");
+        const showLessBtn = document.getElementById("showLessBtn");
+        
         if (results.length > visibleCount) {
             showMoreBtn.style.display = "inline-block";
+            showMoreBtn.textContent = "Load More";
         } else {
             showMoreBtn.style.display = "none";
+        }
+        
+        // Show "Load Less" button if we're showing more than initial count
+        if (showLessBtn) {
+            if (visibleCount > 6) {
+                showLessBtn.style.display = "inline-block";
+            } else {
+                showLessBtn.style.display = "none";
+            }
         }
         
         // Update scroll-to-top threshold after products are rendered
@@ -408,6 +420,7 @@
     // Auto-select delivery option based on address and control radio buttons
     function handleDeliveryAddressChange() {
         const address = els.deliveryAddress?.value.trim() || "";
+        
         if (address) {
             // Check if address contains "Dhaka" (case insensitive)
             const containsDhaka = address.toLowerCase().includes("dhaka");
@@ -418,6 +431,9 @@
                     els.dhakaRadio.disabled = false;
                     els.dhakaRadio.checked = true;
                     updateDeliveryOption();
+                    // Remove visual disabled styling
+                    const dhakaLabel = document.getElementById("dhakaLabel");
+                    if (dhakaLabel) dhakaLabel.style.opacity = "1";
                 }
                 // Enable outside Dhaka radio
                 if (els.outsideRadio) {
@@ -428,6 +444,9 @@
                 if (els.dhakaRadio) {
                     els.dhakaRadio.disabled = true;
                     els.dhakaRadio.checked = false;
+                    // Add visual disabled styling
+                    const dhakaLabel = document.getElementById("dhakaLabel");
+                    if (dhakaLabel) dhakaLabel.style.opacity = "0.5";
                 }
                 // Enable and select outside Dhaka radio
                 if (els.outsideRadio) {
@@ -440,10 +459,23 @@
             // Re-enable both options when address is empty
             if (els.dhakaRadio) {
                 els.dhakaRadio.disabled = false;
+                // Remove visual disabled styling
+                const dhakaLabel = document.getElementById("dhakaLabel");
+                if (dhakaLabel) dhakaLabel.style.opacity = "1";
             }
             if (els.outsideRadio) {
                 els.outsideRadio.disabled = false;
             }
+        }
+        
+        // Also add click event prevention for disabled radio
+        if (els.dhakaRadio) {
+            els.dhakaRadio.onclick = function(e) {
+                if (this.disabled) {
+                    e.preventDefault();
+                    return false;
+                }
+            };
         }
     }
     
@@ -570,12 +602,25 @@
         renderProducts();
     });
 
-    // ===== SHOW MORE HANDLER =====
-    document.getElementById("showMoreBtn").addEventListener("click", () => {
-        visibleCount += 6;
-        localStorage.setItem('visibleCount', visibleCount.toString());
-        renderProducts();
-    });
+    // ===== SHOW MORE/LESS HANDLERS =====
+    const showMoreBtn = document.getElementById("showMoreBtn");
+    const showLessBtn = document.getElementById("showLessBtn");
+    
+    if (showMoreBtn) {
+        showMoreBtn.addEventListener("click", () => {
+            visibleCount += 6;
+            localStorage.setItem('visibleCount', visibleCount.toString());
+            renderProducts();
+        });
+    }
+    
+    if (showLessBtn) {
+        showLessBtn.addEventListener("click", () => {
+            visibleCount = 6;
+            localStorage.setItem('visibleCount', visibleCount.toString());
+            renderProducts();
+        });
+    }
 
     // ===== API HELPER =====
     async function apiRequest(payload) {

@@ -803,16 +803,36 @@
                     ordersDiv.appendChild(div);
                   });
 
-                  if (visibleCount < allOrders.length) {
-                    const showMoreBtn = document.createElement("button");
-                    showMoreBtn.className = "btn";
-                    showMoreBtn.textContent = "Show More";
-                    showMoreBtn.style.marginTop = "10px";
-                    showMoreBtn.addEventListener("click", () => {
-                      visibleCount += 6;
-                      loadOrders(false);
-                    });
-                    ordersDiv.appendChild(showMoreBtn);
+                  // Add show more/less buttons
+                  if (allOrders.length > 6) {
+                    const buttonDiv = document.createElement("div");
+                    buttonDiv.style.textAlign = "center";
+                    buttonDiv.style.marginTop = "10px";
+                    
+                    if (visibleCount < allOrders.length) {
+                      const showMoreBtn = document.createElement("button");
+                      showMoreBtn.className = "btn";
+                      showMoreBtn.textContent = "Show More";
+                      showMoreBtn.addEventListener("click", () => {
+                        visibleCount += 6;
+                        loadOrders(false);
+                      });
+                      buttonDiv.appendChild(showMoreBtn);
+                    }
+                    
+                    if (visibleCount > 6) {
+                      const showLessBtn = document.createElement("button");
+                      showLessBtn.className = "btn";
+                      showLessBtn.textContent = "Show Less";
+                      showLessBtn.style.marginLeft = "10px";
+                      showLessBtn.addEventListener("click", () => {
+                        visibleCount = 6;
+                        loadOrders(false);
+                      });
+                      buttonDiv.appendChild(showLessBtn);
+                    }
+                    
+                    ordersDiv.appendChild(buttonDiv);
                   }
                 }
 

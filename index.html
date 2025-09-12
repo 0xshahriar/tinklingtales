@@ -362,9 +362,9 @@
                 position: fixed;
                 bottom: 20px;
                 left: 20px;
-                width: 50px;
-                height: 50px;
-                background: linear-gradient(135deg, #1f2937, #374151);
+                width: 35px;
+                height: 35px;
+                background: rgba(31, 41, 55, 0.4);
                 color: white;
                 border: none;
                 border-radius: 50%;
@@ -373,15 +373,15 @@
                 display: none;
                 align-items: center;
                 justify-content: center;
-                font-size: 20px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                font-size: 14px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
                 transition: all 0.3s ease;
             }
 
             .scroll-to-top:hover {
-                background: linear-gradient(135deg, #374151, #4b5563);
+                background: rgba(31, 41, 55, 0.6);
                 transform: translateY(-2px);
-                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             }
 
             .scroll-to-top.visible {
@@ -752,7 +752,8 @@
                     <div id="cards" class="cards" aria-live="polite"></div>
                     <div id="empty" class="box" style="display:none;text-align:center;color:#6b7280">No items match your filters.</div>
                     <div style="text-align:center;margin-top:20px">
-                        <button id="showMoreBtn" class="btn">Show More</button>
+                        <button id="showMoreBtn" class="btn">Load More</button>
+                        <button id="showLessBtn" class="btn" style="margin-left:10px;display:none">Load Less</button>
                     </div>
                 </section>
                 <aside>
@@ -826,7 +827,7 @@
                     <!-- Delivery options -->
                     <div style="margin-top:10px;display:grid;gap:8px">
                         <div style="margin-top:10px;display:grid;gap:8px">
-                            <label style="display:flex;align-items:center;gap:6px;font-size:14px">
+                            <label id="dhakaLabel" style="display:flex;align-items:center;gap:6px;font-size:14px">
                                 <input type="radio" name="deliveryOption" value="dhaka" id="dhakaRadio" /> Delivery inside Dhaka (৳60) </label>
                             <label style="display:flex;align-items:center;gap:6px;font-size:14px">
                                 <input type="radio" name="deliveryOption" value="outside" id="outsideRadio" /> Delivery outside Dhaka (৳120) </label>
