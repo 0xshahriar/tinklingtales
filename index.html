@@ -849,6 +849,11 @@
                 </div>
             </div>
             <script src="index.js"></script>
+            <script>
+                if ("serviceWorker" in navigator) {
+                  navigator.serviceWorker.register("/sw.js");
+                }
+            </script>
             <div id="toast">Added to cart</div>
         </div>
     </body>
