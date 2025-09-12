@@ -217,6 +217,51 @@
                 max-width: 500px;
                 width: 90%;
             }
+
+            /* Star Rating Styles */
+            .star-rating {
+                display: flex;
+                gap: 4px;
+                font-size: 24px;
+                cursor: pointer;
+            }
+
+            .star {
+                color: #ddd;
+                transition: color 0.2s ease;
+                cursor: pointer;
+                user-select: none;
+            }
+
+            .star:hover,
+            .star.active {
+                color: #fbbf24;
+            }
+
+            .star.filled {
+                color: #fbbf24;
+            }
+
+            .review-stars {
+                display: flex;
+                gap: 2px;
+                font-size: 16px;
+                margin-bottom: 8px;
+            }
+
+            .existing-review {
+                margin-top: 12px;
+                padding: 12px;
+                background: #f9fafb;
+                border-radius: 8px;
+                border-left: 4px solid #fbbf24;
+            }
+
+            .review-text {
+                margin: 0;
+                font-style: italic;
+                color: #374151;
+            }
             .edit-icon {
                 cursor: pointer;
                 width: 18px;
@@ -477,6 +522,39 @@
             </div>
         </div>
 
+        <!-- Review Modal -->
+        <div class="modal" id="reviewModal">
+            <div class="modal-box">
+                <h3>Leave a Review</h3>
+                <div id="reviewOrderDetails" style="margin-bottom: 16px;"></div>
+                
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Rating:</label>
+                    <div class="star-rating" id="starRating">
+                        <span class="star" data-rating="1">☆</span>
+                        <span class="star" data-rating="2">☆</span>
+                        <span class="star" data-rating="3">☆</span>
+                        <span class="star" data-rating="4">☆</span>
+                        <span class="star" data-rating="5">☆</span>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Review:</label>
+                    <textarea 
+                        id="reviewText" 
+                        placeholder="Share your experience with this product..."
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; resize: vertical; min-height: 80px;">
+                    </textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button class="btn" id="closeReview">Cancel</button>
+                    <button class="btn primary" id="submitReview">Submit Review</button>
+                </div>
+            </div>
+        </div>
+
         <script>
                 document.getElementById("year").textContent = new Date().getFullYear();
 
@@ -652,6 +730,24 @@
                       cancelBtn.textContent = "Cancel";
                       cancelBtn.addEventListener("click", () => cancelOrder(o.orderId, cancelBtn));
                       div.appendChild(cancelBtn);
+                    } else if (o.status === "complete") {
+                      // Check if review already exists
+                      if (!o.review) {
+                        const reviewBtn = document.createElement("button");
+                        reviewBtn.className = "btn primary";
+                        reviewBtn.textContent = "Leave Review";
+                        reviewBtn.addEventListener("click", () => openReviewModal(o));
+                        div.appendChild(reviewBtn);
+                      } else {
+                        // Show existing review
+                        const reviewDiv = document.createElement("div");
+                        reviewDiv.className = "existing-review";
+                        reviewDiv.innerHTML = `
+                          <div class="review-stars">${generateStars(o.review.rating, true)}</div>
+                          <p class="review-text">"${o.review.text}"</p>
+                        `;
+                        div.appendChild(reviewDiv);
+                      }
                     }
 
                     ordersDiv.appendChild(div);
@@ -713,6 +809,137 @@
                 document.getElementById("closeOrder").addEventListener("click", () => {
                   document.getElementById("orderModal").style.display = "none";
                 });
+
+                // ===== REVIEW SYSTEM =====
+                let currentReviewOrder = null;
+                let selectedRating = 0;
+
+                function generateStars(rating, readonly = false) {
+                  let stars = "";
+                  for (let i = 1; i <= 5; i++) {
+                    if (i <= rating) {
+                      stars += "★"; // Filled star
+                    } else {
+                      stars += "☆"; // Empty star
+                    }
+                  }
+                  return `<span style="color: #fbbf24;">${stars}</span>`;
+                }
+
+                function openReviewModal(order) {
+                  currentReviewOrder = order;
+                  selectedRating = 0;
+                  
+                  // Reset form
+                  document.getElementById("reviewText").value = "";
+                  resetStarRating();
+                  
+                  // Show order details
+                  document.getElementById("reviewOrderDetails").innerHTML = `
+                    <div style="padding: 12px; background: #f3f4f6; border-radius: 8px;">
+                      <p><strong>Order #${order.orderId}</strong></p>
+                      <p>${order.details}</p>
+                    </div>
+                  `;
+                  
+                  document.getElementById("reviewModal").style.display = "flex";
+                }
+
+                function resetStarRating() {
+                  const stars = document.querySelectorAll("#starRating .star");
+                  stars.forEach(star => {
+                    star.classList.remove("filled", "active");
+                    star.textContent = "☆";
+                  });
+                }
+
+                function updateStarRating(rating) {
+                  const stars = document.querySelectorAll("#starRating .star");
+                  stars.forEach((star, index) => {
+                    if (index < rating) {
+                      star.classList.add("filled");
+                      star.textContent = "★";
+                    } else {
+                      star.classList.remove("filled");
+                      star.textContent = "☆";
+                    }
+                  });
+                }
+
+                // Star rating event listeners
+                document.querySelectorAll("#starRating .star").forEach(star => {
+                  star.addEventListener("click", () => {
+                    selectedRating = parseInt(star.dataset.rating);
+                    updateStarRating(selectedRating);
+                  });
+                  
+                  star.addEventListener("mouseover", () => {
+                    const rating = parseInt(star.dataset.rating);
+                    updateStarRating(rating);
+                  });
+                });
+
+                document.getElementById("starRating").addEventListener("mouseleave", () => {
+                  updateStarRating(selectedRating);
+                });
+
+                // Review modal event listeners
+                document.getElementById("closeReview").addEventListener("click", () => {
+                  document.getElementById("reviewModal").style.display = "none";
+                });
+
+                document.getElementById("submitReview").addEventListener("click", async () => {
+                  if (selectedRating === 0) {
+                    alert("Please select a rating!");
+                    return;
+                  }
+                  
+                  const reviewText = document.getElementById("reviewText").value.trim();
+                  if (!reviewText) {
+                    alert("Please write a review!");
+                    return;
+                  }
+                  
+                  const submitBtn = document.getElementById("submitReview");
+                  setButtonLoading(submitBtn, true, "Submitting...");
+                  
+                  try {
+                    const reviewData = {
+                      action: "addReview",
+                      orderId: currentReviewOrder.orderId,
+                      userId: user.userId,
+                      rating: selectedRating,
+                      text: reviewText,
+                      dateTime: new Date().toISOString()
+                    };
+                    
+                    const res = await apiRequest(reviewData);
+                    if (res.success) {
+                      // Update the order locally to include the review
+                      const orderIndex = allOrders.findIndex(o => o.orderId === currentReviewOrder.orderId);
+                      if (orderIndex !== -1) {
+                        allOrders[orderIndex].review = {
+                          rating: selectedRating,
+                          text: reviewText
+                        };
+                      }
+                      
+                      alert("Thank you for your review!");
+                      document.getElementById("reviewModal").style.display = "none";
+                      loadOrders(false); // Refresh the orders display
+                    } else {
+                      alert(res.error || "Failed to submit review. Please try again.");
+                    }
+                  } catch (error) {
+                    alert("Network error. Please check your connection and try again.");
+                  } finally {
+                    setButtonLoading(submitBtn, false);
+                  }
+                });
+
+                // Expose review functions to global scope for inline event handlers
+                window.openReviewModal = openReviewModal;
+                window.generateStars = generateStars;
 
                 // Verify email
                 document.getElementById("closeVerify").addEventListener("click", () => {

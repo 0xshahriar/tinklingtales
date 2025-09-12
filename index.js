@@ -59,6 +59,7 @@
         maxPrice: document.getElementById("maxPrice"),
         cards: document.getElementById("cards"),
         empty: document.getElementById("empty"),
+        topSellerCards: document.getElementById("topSellerCards"),
         cartBtn: document.getElementById("cartBtn"),
         drawer: document.getElementById("drawer"),
         backdrop: document.getElementById("backdrop"),
@@ -149,9 +150,24 @@
             const card = document.createElement("article");
             card.className = "card";
             card.innerHTML = `
-                <div class="img"><img alt="${p.name}" src="${
-                p.image
-            }" loading="lazy"/></div>
+                <div class="img">
+                    <div class="image-slider" data-product-id="${p.id}">
+                        <div class="slider-container">
+                            ${(p.images || [p.image]).map((img, index) => 
+                                `<img alt="${p.name}" src="${img}" loading="lazy" class="slide ${index === 0 ? 'active' : ''}" data-index="${index}"/>`
+                            ).join('')}
+                        </div>
+                        ${(p.images && p.images.length > 1) ? `
+                            <button class="slider-btn prev" data-direction="prev">‹</button>
+                            <button class="slider-btn next" data-direction="next">›</button>
+                            <div class="slider-dots">
+                                ${(p.images).map((_, index) => 
+                                    `<span class="dot ${index === 0 ? 'active' : ''}" data-index="${index}"></span>`
+                                ).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
                 <div class="body">
                   <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
                     <h3 style="margin:0;font-weight:600">${p.name}</h3>
@@ -189,6 +205,12 @@
                     showToast(`${p.name} added to cart`);
                 }
             );
+
+            // Setup image slider if multiple images exist
+            if (p.images && p.images.length > 1) {
+                setupImageSlider(card, p.images);
+            }
+
             els.cards.appendChild(card);
         });
 
@@ -198,6 +220,125 @@
         } else {
             showMoreBtn.style.display = "none";
         }
+    }
+
+    // ===== IMAGE SLIDER =====
+    function setupImageSlider(card, images) {
+        const slider = card.querySelector('.image-slider');
+        const slides = slider.querySelectorAll('.slide');
+        const prevBtn = slider.querySelector('.prev');
+        const nextBtn = slider.querySelector('.next');
+        const dots = slider.querySelectorAll('.dot');
+        let currentIndex = 0;
+
+        function showSlide(index) {
+            // Remove active class from all slides and dots
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            // Add active class to current slide and dot
+            slides[index].classList.add('active');
+            dots[index].classList.add('active');
+            currentIndex = index;
+        }
+
+        function nextSlide() {
+            const newIndex = (currentIndex + 1) % images.length; // Loop to first
+            showSlide(newIndex);
+        }
+
+        function prevSlide() {
+            const newIndex = (currentIndex - 1 + images.length) % images.length; // Loop to last
+            showSlide(newIndex);
+        }
+
+        // Event listeners for navigation buttons
+        if (prevBtn) prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            prevSlide();
+        });
+
+        if (nextBtn) nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            nextSlide();
+        });
+
+        // Event listeners for dots
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showSlide(index);
+            });
+        });
+
+        // Touch/swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        slider.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        slider.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            const swipeThreshold = 50;
+            
+            if (touchStartX - touchEndX > swipeThreshold) {
+                nextSlide(); // Swipe left, show next
+            } else if (touchEndX - touchStartX > swipeThreshold) {
+                prevSlide(); // Swipe right, show previous
+            }
+        });
+    }
+
+    // ===== TOP SELLERS =====
+    function renderTopSellers() {
+        // Get products with sales data and sort by weekly sales (descending)
+        const topSellers = PRODUCTS
+            .filter(p => p.weeklySales && p.weeklySales > 0)
+            .sort((a, b) => b.weeklySales - a.weeklySales)
+            .slice(0, 3); // Top 3
+
+        els.topSellerCards.innerHTML = "";
+
+        if (topSellers.length === 0) {
+            els.topSellerCards.innerHTML = `<p style="text-align: center; color: #6b7280;">No sales data available yet.</p>`;
+            return;
+        }
+
+        topSellers.forEach((product, index) => {
+            const card = document.createElement("article");
+            card.className = "top-seller-card";
+            
+            // Use either images array or single image
+            const imageUrl = (product.images && product.images.length > 0) ? product.images[0] : product.image;
+            
+            card.innerHTML = `
+                <div class="img">
+                    <img alt="${product.name}" src="${imageUrl}" loading="lazy"/>
+                </div>
+                <div class="body">
+                    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+                        <h3 style="margin:0;font-weight:600;font-size:16px">${product.name}</h3>
+                        <div class="price" style="font-size:14px">${CURRENCY}${product.price.toLocaleString("en-BD")}</div>
+                    </div>
+                    <div class="muted" style="font-size:13px">${product.finish} • ${product.colors.join(", ")}</div>
+                    <div class="tags" style="margin:4px 0">${product.tags.map((t) => `<span class="tag" style="font-size:11px">${t}</span>`).join("")}</div>
+                    <div class="sales-badge">${product.weeklySales} sold this week</div>
+                    <button class="btn primary" style="font-size:13px;padding:8px 12px" data-role="add-top-seller" data-product-id="${product.id}">Add to cart</button>
+                </div>
+            `;
+
+            // Add click handler for the add to cart button
+            const addBtn = card.querySelector('[data-role="add-top-seller"]');
+            addBtn.addEventListener("click", () => {
+                // Use the first available size as default
+                addToCart(product, product.sizes[0]);
+                showToast(`${product.name} added to cart`);
+            });
+
+            els.topSellerCards.appendChild(card);
+        });
     }
 
     // ===== CART =====
@@ -256,6 +397,25 @@
     }
     els.dhakaRadio?.addEventListener("change", updateDeliveryOption);
     els.outsideRadio?.addEventListener("change", updateDeliveryOption);
+    
+    // Auto-select delivery option based on address
+    els.deliveryAddress?.addEventListener("input", () => {
+        const address = els.deliveryAddress.value.trim();
+        if (address) {
+            // Check if address contains "Dhaka" (case insensitive)
+            if (address.toLowerCase().includes("dhaka")) {
+                if (els.dhakaRadio && !els.dhakaRadio.disabled) {
+                    els.dhakaRadio.checked = true;
+                    updateDeliveryOption();
+                }
+            } else {
+                if (els.outsideRadio && !els.outsideRadio.disabled) {
+                    els.outsideRadio.checked = true;
+                    updateDeliveryOption();
+                }
+            }
+        }
+    });
     function grandTotal() {
         return subtotal() + deliveryCost;
     }
@@ -461,6 +621,7 @@
     loadCart();
     renderProducts();
     renderCart();
+    renderTopSellers();
 
     // ===== JSON-LD =====
     const orgLd = {
