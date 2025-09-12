@@ -7,7 +7,6 @@
     "sizes": ["2.2", "2.4", "2.6", "2.8", "3.0"],
     "finish": "Glossy",
     "image": "/images/ranga_roop.jpg",
-    "images": ["/images/ranga_roop.jpg", "/images/ranga_roop.jpg"],
     "tags": ["Bridal", "Premium"],
     "weeklySales": 23
   },
