@@ -71,6 +71,37 @@
                 border: 1px solid var(--line);
                 background: #fff;
                 cursor: pointer;
+                transition: all 0.2s ease;
+                position: relative;
+            }
+
+            .btn:hover:not(:disabled) {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+            }
+
+            .btn:disabled,
+            .btn.loading {
+                opacity: 0.7;
+                cursor: not-allowed;
+                pointer-events: none;
+            }
+
+            .btn.loading::after {
+                content: "";
+                position: absolute;
+                width: 14px;
+                height: 14px;
+                border: 2px solid transparent;
+                border-top: 2px solid currentColor;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin-left: 6px;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
             }
             .btn.primary {
                 background: var(--brand);
@@ -455,6 +486,25 @@
                   return res.json();
                 }
 
+                // ===== LOADING STATE HELPER =====
+                function setButtonLoading(button, isLoading, originalText = null) {
+                    if (isLoading) {
+                        button.disabled = true;
+                        button.classList.add('loading');
+                        if (originalText) {
+                            button.dataset.originalText = button.textContent;
+                            button.textContent = originalText;
+                        }
+                    } else {
+                        button.disabled = false;
+                        button.classList.remove('loading');
+                        if (button.dataset.originalText) {
+                            button.textContent = button.dataset.originalText;
+                            delete button.dataset.originalText;
+                        }
+                    }
+                }
+
                 let user = JSON.parse(localStorage.getItem("user") || "{}");
                 if (!user.userId) window.location.href = "login.html";
 
@@ -488,12 +538,21 @@
                   const newPhone = prompt("Enter new phone:", user.phone || "");
                   const newAddr = prompt("Enter new address:", user.address || "");
                   if (newPhone || newAddr) {
-                    await apiRequest({ action:"updateUser", userId:user.userId, phone:newPhone, address:newAddr });
-                    user.phone = newPhone;
-                    user.address = newAddr;
-                    localStorage.setItem("user", JSON.stringify(user));
-                    document.getElementById("phone").textContent = newPhone;
-                    document.getElementById("address").textContent = newAddr;
+                    const editBtn = document.getElementById("editContact");
+                    setButtonLoading(editBtn, true, "Updating...");
+                    
+                    try {
+                      await apiRequest({ action:"updateUser", userId:user.userId, phone:newPhone, address:newAddr });
+                      user.phone = newPhone;
+                      user.address = newAddr;
+                      localStorage.setItem("user", JSON.stringify(user));
+                      document.getElementById("phone").textContent = newPhone;
+                      document.getElementById("address").textContent = newAddr;
+                    } catch (error) {
+                      alert("Failed to update contact information. Please try again.");
+                    } finally {
+                      setButtonLoading(editBtn, false);
+                    }
                   }
                 });
 
@@ -507,13 +566,22 @@
                     return;
                   }
 
-                  const res = await apiRequest({ action:"deleteAccount", userId:user.userId });
-                  if (res.success) {
-                    alert("Your account and all orders have been deleted.");
-                    localStorage.removeItem("user");
-                    window.location.href = "login.html";
-                  } else {
-                    alert(res.error || "Failed to delete account.");
+                  const deleteBtn = document.getElementById("deleteAccountBtn");
+                  setButtonLoading(deleteBtn, true, "Deleting...");
+
+                  try {
+                    const res = await apiRequest({ action:"deleteAccount", userId:user.userId });
+                    if (res.success) {
+                      alert("Your account and all orders have been deleted.");
+                      localStorage.removeItem("user");
+                      window.location.href = "login.html";
+                    } else {
+                      alert(res.error || "Failed to delete account.");
+                    }
+                  } catch (error) {
+                    alert("Network error. Please check your connection and try again.");
+                  } finally {
+                    setButtonLoading(deleteBtn, false);
                   }
                 });
 
@@ -582,7 +650,7 @@
                       const cancelBtn = document.createElement("button");
                       cancelBtn.className = "btn";
                       cancelBtn.textContent = "Cancel";
-                      cancelBtn.addEventListener("click", () => cancelOrder(o.orderId));
+                      cancelBtn.addEventListener("click", () => cancelOrder(o.orderId, cancelBtn));
                       div.appendChild(cancelBtn);
                     }
 
@@ -602,10 +670,18 @@
                   }
                 }
 
-                async function cancelOrder(orderId) {
+                async function cancelOrder(orderId, cancelBtn) {
                   if (!confirm("Cancel this order?")) return;
-                  await apiRequest({ action:"updateOrder", orderId: orderId.toString(), status:"cancelled" });
-                  loadOrders(true);
+                  
+                  setButtonLoading(cancelBtn, true, "Cancelling...");
+                  
+                  try {
+                    await apiRequest({ action:"updateOrder", orderId: orderId.toString(), status:"cancelled" });
+                    loadOrders(true);
+                  } catch (error) {
+                    alert("Failed to cancel order. Please try again.");
+                    setButtonLoading(cancelBtn, false);
+                  }
                 }
 
                 function viewOrder(order) {
