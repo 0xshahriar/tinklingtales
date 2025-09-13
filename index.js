@@ -291,19 +291,29 @@
         // Touch/swipe support for mobile
         let touchStartX = 0;
         let touchEndX = 0;
+        let touchStartY = 0;
+        let touchEndY = 0;
 
         slider.addEventListener('touchstart', (e) => {
             touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
         });
 
         slider.addEventListener('touchend', (e) => {
             touchEndX = e.changedTouches[0].screenX;
+            touchEndY = e.changedTouches[0].screenY;
+            
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
             const swipeThreshold = 50;
             
-            if (touchStartX - touchEndX > swipeThreshold) {
-                nextSlide(); // Swipe left, show next
-            } else if (touchEndX - touchStartX > swipeThreshold) {
-                prevSlide(); // Swipe right, show previous
+            // Only trigger swipe if horizontal movement is greater than vertical
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > swipeThreshold) {
+                if (deltaX > 0) {
+                    prevSlide(); // Swipe right, show previous
+                } else {
+                    nextSlide(); // Swipe left, show next
+                }
             }
         });
     }
@@ -425,7 +435,19 @@
             const containsDhaka = address.toLowerCase().includes("dhaka");
             
             if (containsDhaka) {
-                // Enable Dhaka radio and auto-select it
+                // If address contains "Dhaka", enable both options and let user choose
+                if (els.dhakaRadio) {
+                    els.dhakaRadio.disabled = false;
+                    // Remove visual disabled styling
+                    const dhakaLabel = document.getElementById("dhakaLabel");
+                    if (dhakaLabel) dhakaLabel.style.opacity = "1";
+                }
+                if (els.outsideRadio) {
+                    els.outsideRadio.disabled = false;
+                }
+                // Don't auto-select anything, let user choose
+            } else {
+                // If address does NOT contain "Dhaka", select inside Dhaka and block outside Dhaka
                 if (els.dhakaRadio) {
                     els.dhakaRadio.disabled = false;
                     els.dhakaRadio.checked = true;
@@ -434,24 +456,13 @@
                     const dhakaLabel = document.getElementById("dhakaLabel");
                     if (dhakaLabel) dhakaLabel.style.opacity = "1";
                 }
-                // Enable outside Dhaka radio
+                // Disable and uncheck outside Dhaka radio
                 if (els.outsideRadio) {
-                    els.outsideRadio.disabled = false;
-                }
-            } else {
-                // Disable Dhaka radio and auto-select outside Dhaka
-                if (els.dhakaRadio) {
-                    els.dhakaRadio.disabled = true;
-                    els.dhakaRadio.checked = false;
+                    els.outsideRadio.disabled = true;
+                    els.outsideRadio.checked = false;
                     // Add visual disabled styling
-                    const dhakaLabel = document.getElementById("dhakaLabel");
-                    if (dhakaLabel) dhakaLabel.style.opacity = "0.5";
-                }
-                // Enable and select outside Dhaka radio
-                if (els.outsideRadio) {
-                    els.outsideRadio.disabled = false;
-                    els.outsideRadio.checked = true;
-                    updateDeliveryOption();
+                    const outsideLabel = els.outsideRadio.parentElement;
+                    if (outsideLabel) outsideLabel.style.opacity = "0.5";
                 }
             }
         } else {
@@ -464,12 +475,23 @@
             }
             if (els.outsideRadio) {
                 els.outsideRadio.disabled = false;
+                // Remove visual disabled styling
+                const outsideLabel = els.outsideRadio.parentElement;
+                if (outsideLabel) outsideLabel.style.opacity = "1";
             }
         }
         
-        // Also add click event prevention for disabled radio
+        // Add click event prevention for disabled radio buttons
         if (els.dhakaRadio) {
             els.dhakaRadio.onclick = function(e) {
+                if (this.disabled) {
+                    e.preventDefault();
+                    return false;
+                }
+            };
+        }
+        if (els.outsideRadio) {
+            els.outsideRadio.onclick = function(e) {
                 if (this.disabled) {
                     e.preventDefault();
                     return false;
@@ -495,6 +517,7 @@
             if (els.deliveryAddress) {
                 els.deliveryAddress.disabled = true;
                 els.deliveryAddress.value = "";
+                els.deliveryAddress.placeholder = "Add items to cart to enter address";
             }
             if (els.dhakaRadio) {
                 els.dhakaRadio.disabled = true;
@@ -512,7 +535,10 @@
                 els.cartBadge.textContent = count;
                 els.cartBadge.style.display = "inline-block";
             }
-            if (els.deliveryAddress) els.deliveryAddress.disabled = false;
+            if (els.deliveryAddress) {
+                els.deliveryAddress.disabled = false;
+                els.deliveryAddress.placeholder = "Delivery Address";
+            }
             if (els.dhakaRadio) els.dhakaRadio.disabled = false;
             if (els.outsideRadio) els.outsideRadio.disabled = false;
         }
@@ -562,16 +588,25 @@
     function openDrawer() {
         els.drawer.classList.add("open");
         els.drawer.setAttribute("aria-hidden", "false");
+        els.cartBtn.setAttribute("aria-expanded", "true");
     }
     function closeDrawer() {
         els.drawer.classList.remove("open");
         els.drawer.setAttribute("aria-hidden", "true");
+        els.cartBtn.setAttribute("aria-expanded", "false");
     }
     els.cartBtn.addEventListener("click", openDrawer);
     els.backdrop.addEventListener("click", closeDrawer);
     els.closeDrawer.addEventListener("click", () => {
         saveCart();
         closeDrawer();
+    });
+
+    // Close drawer with Escape key
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && els.drawer.classList.contains("open")) {
+            closeDrawer();
+        }
     });
 
     // ===== FILTER HANDLERS =====
@@ -623,11 +658,24 @@
 
     // ===== API HELPER =====
     async function apiRequest(payload) {
-        const res = await fetch(API_URL, {
-            method: "POST",
-            body: JSON.stringify(payload),
-        });
-        return res.json();
+        try {
+            const res = await fetch(API_URL, {
+                method: "POST",
+                body: JSON.stringify(payload),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            
+            return await res.json();
+        } catch (error) {
+            console.error('API request failed:', error);
+            throw error;
+        }
     }
 
     // ===== LOADING STATE HELPER =====
@@ -686,14 +734,17 @@
             });
 
             if (res.success) {
-                alert("Order placed successfully!");
+                alert("Order placed successfully! You will receive a confirmation email shortly.");
                 state.cart = [];
                 localStorage.removeItem(CART_KEY);
+                renderCart(); // Update cart display
+                closeDrawer(); // Close the cart drawer
                 window.location.href = "user.html";
             } else {
-                alert(res.error || "Checkout failed.");
+                alert(res.error || "Checkout failed. Please try again.");
             }
         } catch (error) {
+            console.error("Checkout error:", error);
             alert("Network error. Please check your connection and try again.");
         } finally {
             // Remove loading state
