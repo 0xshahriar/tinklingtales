@@ -4,17 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Reset Password — Tinkling Tales</title>
-  <link rel="canonical" href="https://tinklingtales.netlify.app/forgot" />
-  <link rel="icon" type="image/jpg" sizes="32x32" href="/tinklingtales_logo.jpg">
-  <link rel="apple-touch-icon" href="/tinklingtales_logo.jpg">
+  <link rel="icon" type="image/jpg" href="/tinklingtales_logo.jpg" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #f7f7fb;
-      --card: #ffffff;
+      --card: #fff;
       --text: #111827;
       --muted: #6b7280;
-      --brand: #111111;
+      --brand: #111;
       --line: #e5e7eb;
       --radius: 18px;
       --shadow: 0 10px 25px rgba(0,0,0,.06);
@@ -78,66 +76,9 @@
     .valid { color: green; }
     .invalid { color: red; }
     .neutral { color: var(--muted); }
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 40;
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--line);
-    }
-    .h-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 10px;
-    }
-    .brand {
-      font-weight: 800;
-      font-size: 18px;
-    }
-    .spacer { flex: 1; }
-    footer .row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 0;
-      color: #6b7280;
-      font-size: 14px;
-    }
-    @media (max-width: 640px) {
-      footer .row {
-        flex-direction: column;
-        text-align: center;
-        gap: 8px;
-      }
-    }
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <header>
-    <div class="container h-row">
-      <div style="font-size: 18px" class="brand">
-        <a href="/index.html">Tinkling Tales</a>
-      </div>
-      <span class="spacer"></span>
-      <a href="https://www.facebook.com/tinklingtales" target="_blank" aria-label="Facebook">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M22 12a10 10 0 1 0-11.5 9.9v-7h-2v-2.9h2V9.5c0-2 1.2-3.1 3-3.1.9 0 1.8.1 1.8.1v2h-1c-1 0-1.3.6-1.3 1.2v1.4h2.3L14 14.9h-1.8v7A10 10 0 0 0 22 12" />
-        </svg>
-      </a>
-      <a href="https://www.instagram.com/tinklingtales" target="_blank" aria-label="Instagram">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M7 2C4.2 2 2 4.2 2 7v10c0 2.8 2.2 5 5 5h10c2.8 0 5-2.2 5-5V7c0-2.8-2.2-5-5-5H7zm0 2h10c1.7 0 3 1.3 3 3v10c0 1.7-1.3 3-3 3H7c-1.7 0-3-1.3-3-3V7c0-1.7 1.3-3 3-3zm5 2.8A5.2 5.2 0 1 0 17.2 12 5.2 5.2 0 0 0 12 6.8zm0 2A3.2 3.2 0 1 1 8.8 12 3.2 3.2 0 0 1 12 8.8zM17.5 6a1 1 0 1 0 1 1 1 1 0 0 0-1-1z"/>
-        </svg>
-      </a>
-    </div>
-  </header>
-
-  <!-- Main -->
   <main class="container">
     <div class="card">
       <h1>Reset Password</h1>
@@ -151,6 +92,7 @@
           <input type="password" id="confirmPassword" required />
         </label>
 
+        <!-- Password checklist -->
         <div class="checklist" id="pwChecklist">
           <span id="len" class="neutral">❌ ≥ 8 characters</span>
           <span id="up" class="neutral">❌ 1 uppercase letter</span>
@@ -164,31 +106,20 @@
     </div>
   </main>
 
-  <!-- Footer -->
-  <footer>
-    <div class="container row">
-      <div>© <span id="year"></span> Tinkling Tales. All rights reserved.</div>
-      <div style="display:flex;gap:12px">
-        <a class="muted" href="/return-policy.html">Return Policy</a>
-        <a class="muted" href="/terms.html">Terms</a>
-        <a class="muted" href="/contact.html">Contact</a>
-      </div>
-    </div>
-  </footer>
-
   <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
+    const API_URL = "https://script.google.com/macros/s/AKfycbzS3L6meA7bS23B7rFVl19h3Mk5Tg0-tu3oxhDjTOyKqspufqmffcBNIF7Qh8Gy519vpA/exec";
 
-    const API_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
+    // Extract token from query string
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
 
+    // ✅ Check for missing/invalid token
     if (!token) {
       alert("Invalid or missing reset token. Please use the link from your email.");
       window.location.href = "login.html";
     }
 
-    // Password checklist
+    // Checklist logic
     const pw = document.getElementById("newPassword");
     pw.addEventListener("input", () => {
       const v = pw.value;
@@ -224,6 +155,11 @@
         return;
       }
 
+      if (!token) {
+        alert("Invalid or missing reset token. Please use the link from your email.");
+        return;
+      }
+
       const passwordHash = await sha256(newPassword);
       const btn = document.getElementById("submitBtn");
       btn.disabled = true;
@@ -232,10 +168,10 @@
       try {
         const res = await fetch(API_URL, {
           method: "POST",
-          body: JSON.stringify({
-            action: "resetPassword",
-            token,
-            passwordHash
+          body: JSON.stringify({ 
+            action: "resetPassword", 
+            token, 
+            passwordHash 
           })
         });
         const data = await res.json();
