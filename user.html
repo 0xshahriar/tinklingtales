@@ -589,7 +589,7 @@
         <script>
                 document.getElementById("year").textContent = new Date().getFullYear();
 
-                const API_URL = "https://script.google.com/macros/s/AKfycbzS3L6meA7bS23B7rFVl19h3Mk5Tg0-tu3oxhDjTOyKqspufqmffcBNIF7Qh8Gy519vpA/exec";
+                const API_URL = "https://script.google.com/macros/s/AKfycbz6zTknbYJrN0n55iStUCX8_x6D8tAtFJc_TpHdHM5ClBeIeIkgXV_jY6L_tfLXJVFkXw/exec";
                 async function apiRequest(payload) {
                   const res = await fetch(API_URL, { method:"POST", body: JSON.stringify(payload) });
                   return res.json();
