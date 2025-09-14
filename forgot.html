@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reset Password — Tinkling Tales</title>
+  <link rel="icon" type="image/jpg" href="/tinklingtales_logo.jpg" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f7f7fb;
+      --card: #fff;
+      --text: #111827;
+      --muted: #6b7280;
+      --brand: #111;
+      --line: #e5e7eb;
+      --radius: 18px;
+      --shadow: 0 10px 25px rgba(0,0,0,.06);
+    }
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .container {
+      max-width: 420px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+    h1 {
+      font-size: 22px;
+      margin: 0 0 14px;
+    }
+    label span {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      background: var(--brand);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    .checklist {
+      font-size: 13px;
+      margin: 6px 0 14px;
+    }
+    .checklist span { display:block; margin:2px 0; }
+    .valid { color: green; }
+    .invalid { color: red; }
+    .neutral { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <div class="card">
+      <h1>Reset Password</h1>
+      <form id="resetForm">
+        <input type="hidden" id="username" />
+        <label>
+          <span>New Password</span>
+          <input type="password" id="newPassword" required />
+        </label>
+        <label>
+          <span>Confirm Password</span>
+          <input type="password" id="confirmPassword" required />
+        </label>
+
+        <!-- Password checklist -->
+        <div class="checklist" id="pwChecklist">
+          <span id="len" class="neutral">❌ ≥ 8 characters</span>
+          <span id="up" class="neutral">❌ 1 uppercase letter</span>
+          <span id="low" class="neutral">❌ 1 lowercase letter</span>
+          <span id="num" class="neutral">❌ 1 number</span>
+          <span id="sym" class="neutral">❌ 1 special character</span>
+        </div>
+
+        <button type="submit" class="btn" id="submitBtn">Update Password</button>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    // API URL (replace with your Apps Script)
+    const API_URL = "https://script.google.com/macros/s/AKfycbzS3L6meA7bS23B7rFVl19h3Mk5Tg0-tu3oxhDjTOyKqspufqmffcBNIF7Qh8Gy519vpA/exec";
+
+    // Extract username from query string
+    const params = new URLSearchParams(window.location.search);
+    const username = params.get("user");
+    document.getElementById("username").value = username || "";
+
+    // Checklist logic
+    const pw = document.getElementById("newPassword");
+    pw.addEventListener("input", () => {
+      const v = pw.value;
+      const checks = {
+        len: v.length >= 8,
+        up: /[A-Z]/.test(v),
+        low: /[a-z]/.test(v),
+        num: /[0-9]/.test(v),
+        sym: /[^A-Za-z0-9]/.test(v)
+      };
+      for (const [id, ok] of Object.entries(checks)) setCheck(id, ok);
+    });
+    function setCheck(id, ok) {
+      const el = document.getElementById(id);
+      el.textContent = (ok ? "✅ " : "❌ ") + el.textContent.slice(2);
+      el.className = ok ? "valid" : "invalid";
+    }
+
+    // SHA-256 helper
+    async function sha256(str) {
+      const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
+    }
+
+    // Submit handler
+    document.getElementById("resetForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const newPassword = document.getElementById("newPassword").value.trim();
+      const confirmPassword = document.getElementById("confirmPassword").value.trim();
+
+      if (newPassword !== confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+      }
+
+      if (!username) {
+        alert("Missing username. Please use the link from your email.");
+        return;
+      }
+
+      const passwordHash = await sha256(newPassword);
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+      btn.textContent = "Updating...";
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({ 
+            action: "resetPassword", 
+            username: username, 
+            passwordHash 
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("Password updated successfully! Please login.");
+          window.location.href = "login.html";
+        } else {
+          alert(data.error || "Failed to reset password.");
+        }
+      } catch (err) {
+        alert("Network error. Please try again.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Update Password";
+      }
+    });
+  </script>
+</body>
+</html>

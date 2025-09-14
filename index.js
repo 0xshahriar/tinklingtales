@@ -2,7 +2,7 @@
     const SHOP_NAME = "Tinkling Tales";
     const FACEBOOK_PAGE_URL = "https://www.facebook.com/tinklingtales";
     const CURRENCY = "৳";
-    const API_URL = "https://script.google.com/macros/s/AKfycbx9-oA0QQK70VgfeYvzgOd2kGLRblHd1sf1JZs70Dq4lZkWTRIsT4epviZnwoodNC3ckg/exec"; // ✅ replace with your Apps Script URL
+    const API_URL = "https://script.google.com/macros/s/AKfycbzS3L6meA7bS23B7rFVl19h3Mk5Tg0-tu3oxhDjTOyKqspufqmffcBNIF7Qh8Gy519vpA/exec"; // ✅ replace with your Apps Script URL
 
     // --- Products ---
     const PRODUCTS = [];
@@ -426,62 +426,59 @@
     els.dhakaRadio?.addEventListener("change", updateDeliveryOption);
     els.outsideRadio?.addEventListener("change", updateDeliveryOption);
     
-    // Auto-select delivery option based on address and control radio buttons
+    // Auto-select delivery charge based on address and control radio buttons
     function handleDeliveryAddressChange() {
         const address = els.deliveryAddress?.value.trim() || "";
         
         if (address) {
-            // Check if address contains "Dhaka" (case insensitive)
             const containsDhaka = address.toLowerCase().includes("dhaka");
             
             if (containsDhaka) {
-                // If address contains "Dhaka", enable both options and let user choose
-                if (els.dhakaRadio) {
-                    els.dhakaRadio.disabled = false;
-                    // Remove visual disabled styling
-                    const dhakaLabel = document.getElementById("dhakaLabel");
-                    if (dhakaLabel) dhakaLabel.style.opacity = "1";
-                }
-                if (els.outsideRadio) {
-                    els.outsideRadio.disabled = false;
-                }
-                // Don't auto-select anything, let user choose
-            } else {
-                // If address does NOT contain "Dhaka", select inside Dhaka and block outside Dhaka
+                // ✅ If address contains "Dhaka" → select inside Dhaka and disable outside
                 if (els.dhakaRadio) {
                     els.dhakaRadio.disabled = false;
                     els.dhakaRadio.checked = true;
                     updateDeliveryOption();
-                    // Remove visual disabled styling
                     const dhakaLabel = document.getElementById("dhakaLabel");
                     if (dhakaLabel) dhakaLabel.style.opacity = "1";
                 }
-                // Disable and uncheck outside Dhaka radio
                 if (els.outsideRadio) {
                     els.outsideRadio.disabled = true;
                     els.outsideRadio.checked = false;
-                    // Add visual disabled styling
                     const outsideLabel = els.outsideRadio.parentElement;
                     if (outsideLabel) outsideLabel.style.opacity = "0.5";
                 }
+            } else {
+                // ✅ If address does NOT contain "Dhaka" → select outside Dhaka and disable inside
+                if (els.outsideRadio) {
+                    els.outsideRadio.disabled = false;
+                    els.outsideRadio.checked = true;
+                    updateDeliveryOption();
+                    const outsideLabel = els.outsideRadio.parentElement;
+                    if (outsideLabel) outsideLabel.style.opacity = "1";
+                }
+                if (els.dhakaRadio) {
+                    els.dhakaRadio.disabled = true;
+                    els.dhakaRadio.checked = false;
+                    const dhakaLabel = document.getElementById("dhakaLabel");
+                    if (dhakaLabel) dhakaLabel.style.opacity = "0.5";
+                }
             }
         } else {
-            // Re-enable both options when address is empty
+            // ✅ Empty address → re-enable both
             if (els.dhakaRadio) {
                 els.dhakaRadio.disabled = false;
-                // Remove visual disabled styling
                 const dhakaLabel = document.getElementById("dhakaLabel");
                 if (dhakaLabel) dhakaLabel.style.opacity = "1";
             }
             if (els.outsideRadio) {
                 els.outsideRadio.disabled = false;
-                // Remove visual disabled styling
                 const outsideLabel = els.outsideRadio.parentElement;
                 if (outsideLabel) outsideLabel.style.opacity = "1";
             }
         }
         
-        // Add click event prevention for disabled radio buttons
+        // Prevent clicks on disabled radios
         if (els.dhakaRadio) {
             els.dhakaRadio.onclick = function(e) {
                 if (this.disabled) {
@@ -499,7 +496,7 @@
             };
         }
     }
-    
+        
     els.deliveryAddress?.addEventListener("input", handleDeliveryAddressChange);
     
     // Apply initial state based on any pre-filled address
